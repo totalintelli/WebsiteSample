@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <script>
+      // 실시간 차트 참조 : https://codepen.io/ztrayner/pen/VeJMRL/
+      $(document).ready(function() {
+        var ctx = document.getElementById("realtimeInverter").getContext("2d");
+        var color = Chart.helpers.color;
+        var firstLineChartColor = "#004D77";
+        var secondLineChartColor = "#009688";
+        var firstLineChartBGColor = "rgba(0, 77, 119, 0.1)";
+        var secondLineChartBGColor = "rgba(0, 150, 136, 0.1)";
+        var currentDate = new Date();
+        var currentTime = currentDate.getHours();
+        alert("지금 시각은 " + currentTime + "시 입니다.");
+        var inverterData = [
+          10,
+          10,
+          10,
+          8,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10,
+          10
+        ];
+        var data = {
+          labels: [
+            "0:00",
+            "1:00",
+            "2:00",
+            "3:00",
+            "4:00",
+            "5:00",
+            "6:00",
+            "7:00",
+            "8:00",
+            "9:00",
+            "10:00",
+            "11:00",
+            "12:00",
+            "13:00",
+            "14:00",
+            "15:00",
+            "16:00",
+            "17:00",
+            "18:00",
+            "19:00",
+            "20:00",
+            "21:00",
+            "22:00",
+            "23:00"
+          ],
+          datasets: [
+            {
+              label: "My First dataset",
+              fillColor: firstLineChartBGColor,
+              strokeColor: firstLineChartColor,
+              pointColor: firstLineChartColor,
+              pointStrokeColor: "#fff",
+              pointHighlightFill: "#fff",
+              pointHighlightStroke: firstLineChartColor,
+              data: inverterData[currentTime - 1]
+            }
+          ]
+        };
+        var options = {
+          animation: false,
+          //Boolean - If we want to override with a hard coded scale
+          scaleOverride: true,
+          //** Required if scaleOverride is true **
+          //Number - The number of steps in a hard coded scale
+          scaleSteps: 10,
+          //Number - The value jump in the hard coded scale
+          scaleStepWidth: 1,
+          //Number - The scale starting value
+          scaleStartValue: 0
+        };
+
+        var myLineChart = new Chart(ctx).Line(data, options);
+
+        setInterval(function() {
+          setData(data.datasets[0].data);
+          setLabels(data.labels);
+
+          var myLineChart = new Chart(ctx).Line(data, options);
+        }, 1000);
+
+        function setLabels(labels) {
+          var nextMonthIndex = times.indexOf(labels[labels.length - 1]) + 1;
+          var nextMonthName =
+            times[nextMonthIndex] != undefined ? times[nextMonthIndex] : "0:00";
+          labels.push(nextMonthName);
+          labels.shift();
+        }
+
+        function setData(data) {
+          data.push(Math.floor(Math.random() * 10) + 1);
+          data.shift();
+        }
+
+        function convertMonthNameToNumber(monthName) {
+          var myDate = new Date(monthName + " 1, 2016");
+          var monthDigit = myDate.getMonth();
+          return isNaN(monthDigit) ? 0 : monthDigit + 1;
+        }
+
+        var times = [
+          "0:00",
+          "1:00",
+          "2:00",
+          "3:00",
+          "4:00",
+          "5:00",
+          "6:00",
+          "7:00",
+          "8:00",
+          "9:00",
+          "10:00",
+          "11:00",
+          "12:00",
+          "13:00",
+          "14:00",
+          "15:00",
+          "16:00",
+          "17:00",
+          "18:00",
+          "19:00",
+          "20:00",
+          "21:00",
+          "22:00",
+          "23:00"
+        ];
+      });
+    </script>
+  </head>
+  <body>
+    <div>
+      <div class="container"><h2>실시간 인버터 전체 출력값(kW)</h2></div>
+      <div><canvas id="realtimeInverter"></canvas></div>
+    </div>
+    <div>
+      <div>인버터별 DC/AC 비교</div>
+      <div><canvas id="inverterDcAc"></canvas></div>
+    </div>
+  </body>
+</html>

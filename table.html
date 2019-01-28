@@ -1,0 +1,77 @@
+<html>
+<head>
+  <title>표</title>
+  <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+  <style>
+    .content {
+      width: 100%;
+      border : 1px solid #444444;
+      border-collapse: collapse;
+      text-align: center;
+    }
+
+    .content th {
+      border : 1px solid #444444;
+
+    }
+
+    .content td {
+      border : 1px solid #444444;
+    }
+  </style>
+  <script type="text/javascript" src="./js/jsFunctions.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function() {
+      loadPowerPlant();
+    });
+  </script>
+</head>
+
+<body>
+  <table border="1px solid">
+    <tbody>
+      <tr>
+        <td>발전소 명 : <select id="select1"></select></td>
+        <td>
+          시작 일자 : <input name="startDate" value="2015-09-23"></input>
+          ~
+          종료 일자 : <input name="endDate" value="2015-09-23"></input>
+        </td>
+        <td><button type="submit">검색</button></td>
+        <td><button type="submit">엑셀</button></td>
+        <td></td>
+        <td>Home > 감시 > 알람</td>
+      </tr>
+    </tbody>
+  </table>
+  <p>
+    <table class="content">
+      <thead>
+        <tr>
+          <th>알람일자</th>
+          <th>경보구분</th>
+          <th>경보내용</th>
+          <th>경보상태</th>
+          <th>조치일자</th>
+          <th>조치내용</th>
+          <th>조치담당자</th>
+          <th>발전소명</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>2015-09-23</td>
+          <td>황색 경보</td>
+          <td>가스 배출구 이상</td>
+          <td>경고</td>
+          <td>2015-09-23</td>
+          <td>가스 배출구 수리</td>
+          <td>홍길동</td>
+          <td>세아</td>
+        </tr>
+      </tbody>
+    </table>
+  </p>
+</body>
+
+</html>

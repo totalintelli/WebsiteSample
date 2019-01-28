@@ -1,0 +1,149 @@
+<html>
+
+<head>
+    <title>메인 화면 그래프</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 합쳐지고 최소화된 최신 CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+    <!-- 부가적인 테마 -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+    <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+    <!-- 최신 jQuery -->
+    <script src="https://code.jquery.com/jquery.min.js"></script>
+    <!-- 차트 라이브러리, 문제점 : IE 9 이하는 HTML5가 되지 않기 때문에 지원하지 않음 -->
+    <!-- ChartJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            function leadingZeros(timeNumber, digits) {
+                var zero = '';
+                timeNumber = timeNumber.toString();
+
+                if (timeNumber.length < digits) {
+                    for (i = 0; i < digits - timeNumber.length; i++)
+                        zero += '0';
+                }
+                return zero + timeNumber;
+            }
+
+            // 막대 그래프를 만든다.
+            var ctx = document.getElementById("verticalBarChart").getContext('2d');
+            var max = 200;
+            var min = 0;
+
+            function getRandomData(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            var output = [getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max)
+            ];
+
+            var verticalBarChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ["7H", "9H", "11H", "12H", "13H", "14H", "15H", "17H",
+                        "19H"
+                    ],
+                    datasets: [{
+                        label: '생산량 (kWh)',
+                        data: output,
+                        backgroundColor: [
+                            "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2",
+                            "#3cba9f", "#3cba9f"
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    legend: {
+                        position: 'right'
+                    },
+                    title: {
+                        display: true,
+                        text: '생산량 그래프',
+                        fontSize: 28
+                    },
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    },
+                }
+            });
+
+            // Sets the default config for 'derivedBubble' to be the same as the bubble defaults.
+            // We look for the defaults by doing Chart.defaults[chartType]
+            // It looks like a bug exists when the defaults don't exist
+            Chart.defaults.derivedBubble = Chart.defaults.bubble;
+
+            // I think the recommend using Chart.controllers.bubble.extend({ extensions here });
+            var custom = Chart.controllers.bubble.extend({
+                draw: function (ease) {
+                    // Call super method first
+                    Chart.controllers.bubble.prototype.draw.call(this, ease);
+
+                    // Now we can do some custom drawing for this dataset. Here we'll draw a red box around the first point in each dataset
+                    var meta = this.getMeta();
+                    var pt0 = meta.data[0];
+                    var radius = pt0._view.radius;
+
+                    var ctx = this.chart.chart.ctx;
+                    ctx.save();
+                    ctx.strokeStyle = 'red';
+                    ctx.lineWidth = 1;
+                    ctx.strokeRect(pt0._view.x - radius, pt0._view.y - radius, 2 * radius, 2 * radius);
+                    ctx.restore();
+                }
+            });
+
+            // 커스텀 거품 그래프를 만든다.
+            var ctx2 = document.getElementById("customBubbleChart").getContext('2d');
+            
+
+            var data = [getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max), getRandomData(min, max),
+            getRandomData(min, max)
+            ];
+
+            // Stores the controller so that the chart initialization routine can look it up with
+            // Chart.controllers[type]
+            Chart.controllers.derivedBubble = custom;
+
+            // Now we can create and use our new chart type
+            var customBubbleChart = new Chart(ctx2, {
+                type: 'derivedBubble',
+                data: data,
+                options: options,
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <p>
+        <div class="container">
+            <p>
+                <div><canvas id="verticalBarChart"></canvas></div>
+            </p>
+            <p>
+                <div><canvas id="customBubbleChart"></canvas></div>
+            </p>
+        </div>
+    </p>
+</body>
+
+</html>

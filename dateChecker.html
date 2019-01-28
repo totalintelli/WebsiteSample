@@ -1,0 +1,33 @@
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>날짜 입력 검사기</title>
+	<script src="./js/dateChecker.js"></script>
+</head>
+<body>
+	<!-- 날짜 입력-->
+	<p>
+		<input type="text" name="date" maxLength="10" size="10" onKeyDown="onlyNumberInput();" onKeyUp="dateFormat(this);" 
+		 placeholder="2018-12-07">
+	</p>
+	<!-- 연도와 월을 입력 -->
+	<p>
+		<input type="text" name="yearMonth" maxLength="7" size="10" onKeyDown="onlyNumberInput();" onKeyUp="yearMonthFormat(this);"
+	 	placeholder="2018-12">
+	</p>
+	<!-- 연도만 입력 -->
+	<p>
+	<input type="text" name="yearMonth" maxLength="4" size="10" onKeyDown="onlyNumberInput();" onKeyUp="yearFormat(this);"
+	 required placeholder="2018">
+	</p>
+
+	<!-- 기간 입력 -->
+	<p>
+		<input type="text" name="fromDate" maxLength="10" size="10" onKeyDown="onlyNumberInput();" onKeyUp="dateFormat(this);"
+	 	placeholder="2018-12-07">
+	 	~
+	 	<input type="text" name="toDate" maxLength="10" size="10" onKeyDown="onlyNumberInput();" onKeyUp="dateFormat(this);"
+	 	placeholder="2018-12-08">
+	</p>
+</body>
+</html>

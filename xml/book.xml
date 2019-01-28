@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<booklist>
+    <book isbn="B001" kind="JAVA">
+        <title>자바 기초</title>
+        <author>홍길동</author>
+        <price>25000</price>
+    </book>
+    <book isbn="B002" kind=".NET">
+        <title>닷넷 프레임워크</title>
+        <author>김길동</author>
+        <price>20000</price>
+    </book>
+</booklist>

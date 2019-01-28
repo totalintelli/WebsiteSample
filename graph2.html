@@ -1,0 +1,347 @@
+<html>
+
+<head>
+  <title>메인 화면 그래프</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- 합쳐지고 최소화된 최신 CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+  <!-- 부가적인 테마 -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+  <!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+
+  <!-- 차트 라이브러리, 문제점 : IE 9 이하는 HTML5가 되지 않기 때문에 지원하지 않음 -->
+  <!-- ChartJS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+
+
+  <!-- 제이 쿼리 -->
+  <script src="https://code.jquery.com/jquery.min.js"></script>
+  <script>
+    // 현재 시간을 화면에 표시한다.
+    function showClock() {
+      var currentDate = new Date();
+      var divClock = document.getElementById("divClock");
+
+      var msg = "현재 시간:" + leadingZeros(currentDate.getHours(), 2) + ":"
+      msg += leadingZeros(currentDate.getMinutes(), 2) + ":";
+      msg += leadingZeros(currentDate.getSeconds(), 2);
+
+      divClock.innerText = msg;
+      setTimeout(showClock, 1000);
+    }
+
+    function leadingZeros(timeNumber, digits) {
+      var zero = '';
+      timeNumber = timeNumber.toString();
+
+      if (timeNumber.length < digits) {
+        for (i = 0; i < digits - timeNumber.length; i++)
+          zero += '0';
+      }
+      return zero + timeNumber;
+    }
+
+    $(document).ready(function () {
+      // 초기에는 경사면 일사량 그래프를 그린다.
+      drawSelectedChart("경사면 일사량");
+
+      // 선택한 값의 환경 정보를 그린다.
+      $('#chartSelect').change(function () {
+        drawSelectedChart(this.value);
+      })
+    });
+
+  </script>
+</head>
+
+<body onload="showClock()">
+  <p>
+    <div class="container">
+      <p>
+        <div style="border:1px solid red;"><canvas id="verticalBarChart"></canvas></div>
+      </p>
+      <p>
+        <div id="divClock" class="clock" style="text-align:right; color:blue;"></div>
+      </p>
+      <p><canvas id="areaChart"></canvas></p>
+      <p>
+        <div style="font-size: 24pt">환경정보 / Sensors</div>
+        <select id="chartSelect">
+          <option>경사면 일사량</option>
+          <option>수평 일사량</option>
+          <option>대기 온도</option>
+          <option>태양 전지 온도</option>
+        </select>
+      </p>
+      <p>
+        <div width="100%" style="position: relative; min-width:100px;">
+          <canvas id="chart"></canvas>
+        </div>
+      </p>
+    </div>
+  </p>
+</body>
+<script>
+  // 막대 그래프를 만든다.
+  var ctx = document.getElementById("verticalBarChart").getContext('2d');
+  var max = 200;
+  var min = 0;
+
+  function getRandomData(min, max) {
+    return Math.random() * (max - min) + min;
+  }
+
+  var output = [getRandomData(min, max), getRandomData(min, max),
+  getRandomData(min, max), getRandomData(min, max),
+  getRandomData(min, max), getRandomData(min, max),
+  getRandomData(min, max), getRandomData(min, max),
+  getRandomData(min, max)
+  ];
+
+  var verticalBarChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ["7H", "9H", "11H", "12H", "13H", "14H", "15H", "17H",
+        "19H"
+      ],
+      datasets: [{
+        label: '생산량 (kWh)',
+        data: output,
+        backgroundColor: [
+          "#3e95cd", "#8e5ea2", "#3cba9f", "#e8c3b9", "#c45850", "#3e95cd", "#8e5ea2",
+          "#3cba9f", "#3cba9f"
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      legend: {
+        position: 'right'
+      },
+      title: {
+        display: true,
+        text: '생산량 그래프',
+        fontSize: 28
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            beginAtZero: true
+          }
+        }]
+      },
+      // responsive: true,
+      // maintainAspectRatio: true
+    }
+  });
+
+  // 영역 그래프를 그린다.
+  var ctx2 = document.getElementById("areaChart").getContext('2d');
+  var labels2 = ['5:00 ~ 5:30', '6:00 ~ 6:30', '7:00 ~ 7:30', '8:00 ~ 8:30',
+    '9:00 ~ 9:30', '10:00 ~ 10:30', '11:00 ~ 11:30', '12:00 ~ 12:30',
+    '13:00 ~ 13:30', '14:00 ~ 14:30', '15:00 ~ 15:30', '16:00 ~ 16:30',
+    '17:00 ~ 17:30', '18:00 ~ 18:30', '19:00 ~ 19:30', '20:00 ~ 20:30',
+    '21:00 ~ 21:30', '22:00 ~ 22:30', '23:00 ~ 23:30', '24:00 ~ 24:30',
+    '1:00 ~ 1:30', '2:00 ~ 2:30', '3:00 ~ 3:30', '4:00 ~ 4:30'
+  ];
+  var data2 = [0, 100, 106, 106, 107, 111, 133, 221, 783, 2200, 2190, 2000,
+    1700, 1600, 1500, 1400, 1300, 700, 600, 500, 400, 300, 200, 100
+  ];
+  var areaChart = new Chart(ctx2, {
+    type: 'line',
+    data: {
+      labels: labels2,
+      datasets: [{
+        data: data2,
+        label: "시간대별 생산량",
+        borderColor: "#3e95cd",
+        fill: 'origin'
+      }]
+    },
+    options: {
+      legend: {
+        display: false
+      },
+      title: {
+        display: true,
+        text: '시간대별 생산량 (전체)',
+        fontSize: 28
+      }
+    }
+  });
+
+    // 환경정보 관련 그래프를 그린다.
+    function drawSelectedChart(chartType) {
+      // 차트 타입이 경사면 일사량이면 경사면 일사량 그래프를 그린다.
+      if (chartType == "경사면 일사량") {
+        drawSlopeIrradiation();
+      }
+      // 차트 타입이 수평 일사량이면 수평 일사량 그래프를 그린다.
+      else if (chartType == "수평 일사량") {
+        drawHorizontalIrradiation();
+      }
+      // 차트 타입이 대기 온도이면 대기 온도 그래프를 그린다.
+      else if (chartType == "대기 온도") {
+        drawAtmosphericTemperature();
+      }
+      // 차트 타입이 태양 전지 온도이면 태양 전지 온도 그래프를 그린다.
+      else {
+        drawSolarCellTemperature();
+      }
+    }
+
+  // 경사면 일사량 그래프를 그린다.
+  function drawSlopeIrradiation() {
+    var ctx3 = document.getElementById("chart").getContext('2d');
+    var labels3 = ['', '', '', '', '', '', '', '', '', '', '', ''];
+    var data3 = [0, 20, 30, 40, 50, 60, 70, 80, 90, 80, 60, 0];
+    var slopeIrradiation = new Chart(ctx3, {
+      type: 'line',
+      data: {
+        labels: labels3,
+        datasets: [{
+          data: data3,
+          borderColor: "red",
+          fill: false,
+          pointRadius: 0,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: "경사면 일사량",
+          fontSize: 12,
+          position: 'bottom'
+        }
+      }
+    });
+  }
+
+  // 수평 일사량 그래프를 그린다.
+  function drawHorizontalIrradiation(params) {
+    var ctx4 = document.getElementById("chart").getContext('2d');
+    var labels4 = ['', '', '', '', '', '', '', '', '', '', '', ''];
+    var data4 = [0, 20, 30, 40, 50, 60, 70, 80, 90, 80, 60, 0];
+    var horizontalIrradiation = new Chart(ctx4, {
+      type: 'line',
+      data: {
+        labels: labels4,
+        datasets: [{
+          data: data4,
+          borderColor: "red",
+          fill: false,
+          pointRadius: 0,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: "수평 일사량",
+          fontSize: 12,
+          position: 'bottom'
+        }
+      }
+    });
+  }
+
+  // 대기 온도 그래프를 그린다.
+  function drawAtmosphericTemperature(params) {
+    var ctx5 = document.getElementById("chart").getContext('2d');
+    var labels5 = ['', '', '', '', '', '', '', '', '', '', '', ''];
+    var data5 = [0, 20, 30, 40, 50, 60, 70, 80, 90, 80, 60, 0];
+    var atmosphericTemperature = new Chart(ctx5, {
+      type: 'line',
+      data: {
+        labels: labels5,
+        datasets: [{
+          data: data5,
+          borderColor: "red",
+          fill: false,
+          pointRadius: 0,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: "대기 온도",
+          fontSize: 12,
+          position: 'bottom'
+        }
+      }
+    });
+  }
+
+  // 태양 전지 온도 그래프를 그린다.
+  function drawSolarCellTemperature(params) {
+    var ctx6 = document.getElementById("chart").getContext('2d');
+    var labels6 = ['', '', '', '', '', '', '', '', '', '', '', ''];
+    var data6 = [0, 20, 30, 40, 50, 60, 70, 80, 90, 80, 60, 0];
+    var solarCellTemperature = new Chart(ctx6, {
+      type: 'line',
+      data: {
+        labels: labels6,
+        datasets: [{
+          data: data6,
+          borderColor: "red",
+          fill: false,
+          pointRadius: 0,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        legend: {
+          display: false
+        },
+        title: {
+          display: true,
+          text: "태양 전지 온도",
+          fontSize: 12,
+          position: 'bottom'
+        }
+      }
+    });
+  }
+
+  setInterval(function () {
+    var output = [getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max)
+    ];
+    verticalBarChart.data.datasets[0].data = output;
+    verticalBarChart.update();
+
+    min = 0;
+    max = 100;
+    var data3 = [getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max),
+    getRandomData(min, max), getRandomData(min, max)
+    ];
+    slopeIrradiation.data.datasets[0].data = data3;
+    slopeIrradiation.update();
+
+  }, 1000)
+</script>
+
+</html>

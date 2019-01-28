@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>동네 3시간 예보</title>
+    <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
+    <script src="./js/jquery-1.11.0.min.js"></script>
+    <style>
+        table {
+            border : 1px solid black;
+            padding : 5px;
+            border-collapse : collapse;    
+            font-size : medium; 
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid black;
+            padding : 10px;
+        }
+    </style>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var today = new Date();
+            // 파라미터로 지역 값을 받은 후 처리하는 함수
+            function getQuerystring(key, default_) {
+                if (default_ == null) default_ = "";
+                key = key.replace(/[\[]/, "\\\[").replace(/[\]]/, "\\\]");
+                var regex = new RegExp("[\\?&]" + key + "=([^&#]*)");
+                var qs = regex.exec(window.location.href);
+                if (qs == null)
+                    return default_;
+                else
+                    return qs[1];
+            }
+
+            var xx = getQuerystring('xx');
+            var yy = getQuerystring('yy');
+
+            if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+                xmlhttp = new XMLHttpRequest();
+            }
+            else {// code for IE6, IE5
+                xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+            }
+
+            // 파라미터로 받은 지역값에 따라 기상청 지역예보를 가져옴.
+            xmlhttp.open("GET", "http://www.kma.go.kr/wid/queryDFS.jsp?gridx=59&gridy=123", false);
+            xmlhttp.setRequestHeader("Access-Control-Allow-Origin", "*");
+            xmlhttp.send();
+            xmlDoc = xmlhttp.responseXML;
+
+            var now = new Date();
+            var hour = now.getHours();
+
+            // 날씨 데이터를 가져온다.
+            var weatherData = xmlDoc.getElementsByTagName("data");
+
+            // 첫 번째 날씨 데이터의 날씨를 확인한다.
+            // 날씨 이미지를 화면에 출력한다.
+            if (weatherData[0].getElementsByTagName("wfKor")[0].childNodes[0].nodeValue == "맑음") {
+                $('#weatherImage').append('<img src="./img/sunny.png">'); // weatherImage div에 이미지 동적 추가
+            }
+            if (weatherData[0].getElementsByTagName("wfKor")[0].childNodes[0].nodeValue == "구름 많음") {
+                $('#weatherImage').append('<img src="./img/cloudy.png">');
+            }
+            if (weatherData[0].getElementsByTagName("wfKor")[0].childNodes[0].nodeValue == "구름 조금") {
+                $('#weatherImage').append('<img src="./img/partlySunny.png">');
+            }
+            if (weatherData[0].getElementsByTagName("wfKor")[0].childNodes[0].nodeValue == "눈") {
+                $('#weatherImage').append('<img src="./img/snowing.png">');
+            }
+            if (weatherData[0].getElementsByTagName("wfKor")[0].childNodes[0].nodeValue == "비") {
+                $('#weatherImage').append('<img src="./img/rainy.png">');
+            }
+
+            var weather = weatherData[0].getElementsByTagName("wfKor")[0].
+                childNodes[0].nodeValue;// 날씨
+            var temperature = weatherData[0].getElementsByTagName("temp")[0].
+                childNodes[0].nodeValue; // 현재 기온
+            var humidity = weatherData[0].getElementsByTagName("reh")[0].
+                childNodes[0].nodeValue; // 습도
+            var windSpeed = weatherData[0].getElementsByTagName("ws")[0].
+                childNodes[0].nodeValue; // 풍속
+
+            // 날씨 텍스트를 화면에 출력한다.
+            $('#wfKor').append('<label>' +
+                weather + '</label>');
+
+            // 현재 기온을 화면에 출력한다.
+            // 동네 3시간 예보이므로 3시간동안 날씨는 같다.
+            $('#temp').append('<label>' +
+                temperature + '℃</label>');
+
+            // 습도를 화면에 출력한다.
+            $('#reh').append('<label>' +
+                humidity + '%</label>');
+
+            // 풍속을 화면에 출력한다.
+            $('#ws').append('<label>' +
+                parseFloat(windSpeed) + '㎧</label>');
+        });
+
+            // $(document).ready(function () {
+            //     $.ajax({
+            //         crossOrigin: true,
+            //         dataType: 'xml',
+            //         url: 'https://www.kma.go.kr/wid/queryDFSRSS.jsp?zone=1159068000',
+            //         jsonpCallback: "myCallback",
+            //         success: function (response) {
+            //             var city = $(response).find('category').text();
+            //             $(response).find('data').each(function () {
+            //                 var day = $(this).find('day').text();
+            //                 var hour = $(this).find('hour').text();
+            //                 var wfKor = $(this).find('wfKor').text();
+
+            //                 // 날씨 이미지를 화면에 출력한다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     if (wfKor == "구름 조금") {
+            //                         $('#weatherImage').append('<img src="./img/partlySunny.png">');
+            //                     }
+            //                     else if (wfKor == "구름 많음") {
+            //                         $('#weatherImage').append('<img src="./img/cloudy.png">');
+            //                     }
+            //                     else if (wfKor == "맑음") {
+            //                         $('#weatherImage').append('<img src="./img/sunny.png">');
+            //                     }
+            //                     else if (wfKor == "눈") {
+            //                         $('#weatherImage').append('<img src="./img/snowing.png">');
+            //                     }
+            //                     else if (wfKor == "비") {
+            //                         $('#weatherImage').append('<img src="./img/rainy.png">');
+            //                     }
+            //                     else if (wfKor == "천둥 번개") {
+            //                         $('#weatherImage').append('<img src="./img/thunderstorms.png">');
+            //                     }
+            //                 }
+
+            //                 // 기온을 화면에 출력한다. 
+            //                 // 동네 3시간 예보이므로 3시간동안 날씨는 같다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     $('#weatherImage').append('<h3 style="text-align: center;">' +
+            //                         $(this).find('temp').text() + '℃</h3>');
+            //                 }
+
+            //                 // 최고 기온을 화면에 출력한다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     $('#tmx').append('<label>' +
+            //                         $(this).find('tmx').text() + '℃</label>');
+            //                 }
+
+            //                 // 최저 기온을 화면에 출력한다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     $('#tmn').append('<label>' +
+            //                         $(this).find('tmn').text() + '℃</label>');
+            //                 }
+
+            //                 // 습도를 화면에 출력한다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     $('#reh').append('<label>' +
+            //                         $(this).find('reh').text() + '%</label>');
+            //                 }
+
+            //                 // 풍속을 화면에 출력한다.
+            //                 if (day == 1 &&
+            //                     (today.getHours() >= hour - 3) &&
+            //                     (today.getHours() <= hour)) {
+            //                     $('#ws').append('<label>' +
+            //                         parseInt($(this).find('ws').text()).toFixed(1) + '㎧</label>');
+            //                 }
+            //             })
+            //         }
+            //     })
+            // })
+    </script>
+</head>
+
+<body>
+    <div class='wrap'>
+        <div id="weatherImage"></div>
+        <table>
+            <tr>
+                <th>날씨</th>
+                <td id="wfKor"></td>
+            </tr>
+            <tr>
+                <th>현재 기온</th>
+                <td id="temp"></td>
+            </tr>
+            <tr>
+                <th>습도</th>
+                <td id="reh"></td>
+            </tr>
+            <tr>
+                <th>풍속</th>
+                <td id="ws"></td>
+            </tr>
+        </table>
+    </div>
+</body>
+
+</html>

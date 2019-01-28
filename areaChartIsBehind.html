@@ -1,0 +1,364 @@
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <style>
+        canvas{
+			-moz-user-select: none;
+			-webkit-user-select: none;
+			-ms-user-select: none;
+		}
+        .chartjs-tooltip-key {
+			display: inline-block;
+			width: 10px;
+			height: 10px;
+			margin-right: 10px;
+		}
+        #chartjs-tooltip {
+			opacity: 1;
+			position: absolute;
+			background: rgba(0, 0, 0, .7);
+			color: white;
+			border-radius: 3px;
+			-webkit-transition: all .1s ease;
+			transition: all .1s ease;
+			pointer-events: none;
+			-webkit-transform: translate(-50%, 0);
+			transform: translate(-50%, 0);
+		}
+    </style>
+    <!-- 차트 라이브러리 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.3/Chart.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            var labels = ["4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00",
+                "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00",
+                "19:00", "20:00", "21:00", "22:00"];
+
+            var output = [0, 0, 0, 2, 7, 15, 23, 30.5, 33, 36, 34, 32, 28,
+                19, 9, 4, 1, 0, 0
+            ];
+            var slopeIrradiationDatas = [0, 0, 0, 0.2, 0.7, 1.5, 2.3, 3.1,
+                3.3, 3.6, 3.4, 3.2, 2.8, 1.9, 0.9, 0.4, 0.1, 0, 0
+            ];
+            var horizontalIrradiationDatas = [0, 0, 0, 0.5, 1.0, 1.8, 2.6,
+                3.4, 3.6, 3.9, 3.7, 3.5, 3.1, 2.2, 1.2, 0.7, 0.4, 0, 0
+            ];
+            var solarCellTemperatureDatas = [4.5, 4.4, 4.3, 4.5, 4.5, 5.0,
+                6.5, 6.9, 8.0, 8.5, 8.6, 8.0, 7.6, 7.2, 6.7, 6.1, 5.8, 5.7, 5.4
+            ];
+            var atmosphericTemperatureDatas = [0.5, 0.4, 0.3, 0.5, 0.5, 1.0,
+                2.5, 2.9, 4.0, 4.5, 4.6, 4.0, 3.6, 3.2, 2.7, 2.1, 1.8, 1.7, 1.4
+            ];
+            // 그래프 그리기
+            var gridColor = '#dedede';
+            var oneYesterdayGraphColor = '#ffcc33'; // 어제 발전량 막대의 색상
+            var oneTodayGraphColor = '#00b0ff'; // 오늘 발전량 막대의 색상
+            var yesterdayGraphColor = new Array(); // 어제 발전량 막대 그래프의 색상
+            var todayGraphColor = new Array();  // 오늘 발전량 막대 그래프의 색상
+            var xValueCount = 19; // x 값의 개수
+
+            // 어제 발전량 막대 그래프와 오늘 발전량 막대 그래프의 색상을 구한다.
+            for (let index = 0; index < xValueCount; index++) {
+                yesterdayGraphColor[index] = oneYesterdayGraphColor;
+                todayGraphColor[index] = oneTodayGraphColor;
+            }
+
+            var ctx = document.getElementById("canvas").getContext('2d');
+            var slopeIrradiationText = '경사 일사량(kcal/㎡/day)';
+            var horizontalIrradiationText = '수평 일사량(kcal/㎡/day)';
+            var atmosphericTemperatureText = '대기 온도(℃)';
+            var solarCellTemperatureText = '태양 전지 온도(℃)';
+            var slopeIrradiationAreaText = '경사 일사량(kcal/㎡/day) 영역';
+            var horizontalIrradiationAreaText = '수평 일사량(kcal/㎡/day) 영역';
+            var atmosphericTemperatureAreaText = '대기 온도(℃) 영역';
+            var solarCellTemperatureAreaText = '태양 전지 온도(℃) 영역';
+            var irradiationText = '일사량(kcal/㎡/day)';
+            var temperatureText = '온도(℃)';
+            var yesterdayOutputText = '어제 발전량(kWh)';
+            var todayOutputText = '오늘 발전량(kWh)';
+            var outputText = '발전량(kWh)';
+            // 영역 차트의 배경색 설정
+            var firstLineChartColor = "#004D77";
+            var secondLineChartColor = "#009688";
+            var color = Chart.helpers.color;
+            var firstLineChartBGColor = color(firstLineChartColor).alpha(0.1).rgbString();
+            var secondLineChartBGColor = color(secondLineChartColor).alpha(0.1).rgbString();
+
+            // 커스톰 툴팁을 만든다.
+            var customTooltips = function (tooltip) {
+                // Tooltip Element
+                var tooltipE1 = document.getElementById('chartjs-tooltip');
+
+                if (!tooltipE1) {
+                    tooltipE1 = document.createElement('div');
+                    tooltipE1.id = 'chartjs-tooltip';
+                    tooltipE1.innerHTML = '<table style="color: white; font-size: 10pt"></table>';
+                    this._chart.canvas.parentNode.appendChild(tooltipE1);
+                }
+
+                // Hide if no tooltip
+                if (tooltip.opacity == 0) {
+                    tooltipE1.style.opacity = 0;
+                    return;
+                }
+
+                // Set caret Position
+                tooltipE1.classList.remove('above', 'below', 'no-transform');
+                if (tooltip.yAlign) {
+                    tooltipE1.classList.add(tooltip.yAlign);
+                } else {
+                    tooltipE1.classList.add('no-transform');
+                }
+
+                function getBody(bodyItem) {
+                    return bodyItem.lines;
+                }
+
+                // Set Text
+                if (tooltip.body) {
+                    var titleLines = tooltip.title || [];
+                    var bodyLines = tooltip.body.map(getBody);
+
+                    var innerHtml = '<thead>';
+
+                    titleLines.forEach(function (title) {
+                        innerHtml += '<tr><th>' + title + '</th></tr>'
+                    });
+                    innerHtml += '</thead><tbody>';
+
+                    var dataCount = 3; // 데이터의 총 개수 - 1
+                    bodyLines.forEach(function (body, i) {
+                        if (i <= dataCount) {
+                            var colors = tooltip.labelColors[i];
+                            var style = 'background:' + colors.backgroundColor;
+                            style += '; border-color:' + colors.borderColor;
+                            style += '; border-width: 2px';
+                            var span = '<span class="chartjs-tooltip-key" style="' + style + '"></span>';
+                            innerHtml += '<tr><td>' + span + body + '</td></tr>';
+                        }
+                    });
+                    innerHtml += '</tbody>';
+
+                    var tableRoot = tooltipE1.querySelector('table');
+                    tableRoot.innerHTML = innerHtml;
+                }
+
+                var positionY = this._chart.canvas.offsetTop;
+                var positionX = this._chart.canvas.offsetLeft;
+
+                // Display, postion and set styles for font
+                tooltipE1.style.opacity = 1;
+                tooltipE1.style.left = positionX + tooltip.caretX + 'px';
+                tooltipE1.style.top = positionY + tooltip.caretY + 'px';
+                tooltipE1.style.fontFamily = tooltip._bodyFontFamily;
+                tooltipE1.style.fontSize = tooltip.bodyFontSize + 'px';
+                tooltipE1.style.fontStyle = tooltip._bodyFontStyle;
+                tooltipE1.style.padding = tooltip.yPadding + 'px ' + tooltip.xPadding + 'px';
+            };
+
+            // 첫 번째 차트의 옵션(영역 그래프 2개 + 막대 그래프 1개)을 정한다.
+            var chartOption =
+            {
+                type: 'bar',
+                data:
+                {
+                    labels: labels,
+                    datasets: [
+                        {
+                            // Changes this dataset to become a line
+                            type: 'line',
+                            label: slopeIrradiationText,
+                            data: slopeIrradiationDatas,
+                            fill: false,
+                            yAxisID: "y-axis-2",
+                            borderColor: firstLineChartColor,
+                            backgroundColor: firstLineChartColor,
+                            pointBackgroundColor: firstLineChartColor,
+                            borderWidth: 0.5
+                        },
+                        {
+                            // Changes this dataset to become a line
+                            type: 'line',
+                            label: horizontalIrradiationText,
+                            data: horizontalIrradiationDatas,
+                            fill: false,
+                            yAxisID: "y-axis-2",
+                            borderColor: secondLineChartColor,
+                            backgroundColor: secondLineChartColor,
+                            pointBackgroundColor: secondLineChartColor,
+                            borderWidth: 0.5
+                        },
+                        {
+                            label: yesterdayOutputText,
+                            data: output,
+                            fill: false,
+                            yAxisID: "y-axis-1",
+                            borderColor: yesterdayGraphColor,
+                            backgroundColor: yesterdayGraphColor,
+                            borderWidth: 1
+                        },
+                        {
+                            label: todayOutputText,
+                            data: output,
+                            fill: false,
+                            yAxisID: "y-axis-1",
+                            borderColor: todayGraphColor,
+                            backgroundColor: todayGraphColor,
+                            borderWidth: 1
+                        },
+                        {
+                            // Changes this dataset to become a line
+                            type: 'line',
+                            label: slopeIrradiationAreaText,
+                            data: slopeIrradiationDatas,
+                            fill: 'origin',
+                            yAxisID: "y-axis-2",
+                            borderColor: firstLineChartColor,
+                            backgroundColor: firstLineChartBGColor,
+                            pointBackgroundColor: firstLineChartColor,
+                            borderWidth: 0.5
+                        },
+                        {
+                            // Changes this dataset to become a line
+                            type: 'line',
+                            label: horizontalIrradiationAreaText,
+                            data: horizontalIrradiationDatas,
+                            fill: 'origin',
+                            yAxisID: "y-axis-2",
+                            borderColor: secondLineChartColor,
+                            backgroundColor: secondLineChartBGColor,
+                            pointBackgroundColor: secondLineChartColor,
+                            borderWidth: 0.5
+                        },
+                    ]
+                },
+                options: {
+                    title: {
+                        display: false,
+                        text: "태양 전지 온도",
+                        fontSize: 12,
+                        position: 'bottom'
+                    },
+                    scales: {
+                        yAxes: [{
+                            type: "linear",
+                            display: true,
+                            position: "left",
+                            id: "y-axis-1",
+                            scaleLabel: {
+                                display: true,
+                                labelString: outputText
+                            }
+                        }, {
+                            type: "linear",
+                            display: true,
+                            position: "right",
+                            id: "y-axis-2",
+                            gridLines: {
+                                drawOnChartArea: false, // only want the grid lines for one axis to show up
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: irradiationText
+                            }
+                        }],
+                        xAxes: [{
+                            barThickness: 30,
+                            gridLines: {
+                                drawBorder: false,
+                                color: 'white'
+                            }
+                        }]
+                    },
+                    tooltips: {
+                        enabled: false,
+                        mode: 'index',
+                        position: 'nearest',
+                        custom: customTooltips
+                    }
+                }
+            }
+
+            // 영역 그래프 2개와 막대 그래프를 그린다.
+            var mixedChart1 = new Chart(ctx, chartOption);
+
+            function handleClick(myRadio, mixedChart, temperature, irradiation) {
+                // 일사량 라디오 버튼을 클릭하면
+                if (myRadio.id == irradiation) {
+                    // 온도 라디오 버튼의 상태를 수정한다.
+                    document.getElementById(temperature).checked = false;
+
+                    // 선 그래프의 범례를 일사량으로 수정한다.
+                    mixedChart.data.datasets[0].label = slopeIrradiationText;
+                    mixedChart.data.datasets[1].label = horizontalIrradiationText;
+                    mixedChart.data.datasets[4].label = slopeIrradiationAreaText;
+                    mixedChart.data.datasets[5].label = horizontalIrradiationAreaText;
+
+                    // 오른쪽 축 제목을 일사량으로 수정한다.
+                    mixedChart.options.scales.yAxes[1].scaleLabel.labelString = irradiationText;
+
+                    // 일사량 데이터를 수정한다.
+                    mixedChart.data.datasets[0].data = slopeIrradiationDatas;
+                    mixedChart.data.datasets[1].data = horizontalIrradiationDatas;
+                    mixedChart.data.datasets[4].data = slopeIrradiationDatas;
+                    mixedChart.data.datasets[5].data = horizontalIrradiationDatas;
+                }
+                // 온도 라디오 버튼을 클릭하면
+                else {
+                    // 일사량 라디오 버튼의 상태를 수정한다.
+                    document.getElementById(irradiation).checked = false;
+
+                    // 선 그래프의 범례를 온도로 수정한다.
+                    mixedChart.data.datasets[0].label = atmosphericTemperatureText;
+                    mixedChart.data.datasets[1].label = solarCellTemperatureText;
+                    mixedChart.data.datasets[4].label = atmosphericTemperatureAreaText;
+                    mixedChart.data.datasets[5].label = solarCellTemperatureAreaText;
+
+                    // 오른쪽 축 제목을 온도로 수정한다.
+                    mixedChart.options.scales.yAxes[1].scaleLabel.labelString = temperatureText;
+
+                    // 온도 데이터를 수정한다.
+                    mixedChart.data.datasets[0].data = atmosphericTemperatureDatas;
+                    mixedChart.data.datasets[1].data = solarCellTemperatureDatas;
+                    mixedChart.data.datasets[4].data = atmosphericTemperatureDatas;
+                    mixedChart.data.datasets[5].data = solarCellTemperatureDatas;
+                }
+                mixedChart.update();
+            }
+
+            // 라디오 버튼을 클릭했을 때, 선 그래프의 데이터를 바꾼다.
+            $('#irradiation1').click(function () {
+                handleClick(this, mixedChart1, "temperature1", "irradiation1");
+            });
+            $('#temperature1').click(function () {
+                handleClick(this, mixedChart1, "temperature1", "irradiation1");
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <div class="panel">
+        <div class="panel-heading">
+            <h3 class="panel-title" style="display: inline-block;">시간대별 생산량</h3>
+        </div>
+        <div class="panel-body">
+            <div class="b_text">
+                <div class="main_radio_div" style="float: right; margin-right: 50px;">
+                    <input type="radio" id="irradiation1" checked=true><label class="l_padding" for="irradiation1">일사량</label></input>
+                    <input type="radio" id="temperature1"><label for="temperature1">온도</label></input>
+                </div>
+                <canvas id="canvas" class="chartjs-size-monitor" style="width: 100px; margin-right: 10px;">
+                </canvas> <!-- 영역 그래프 2개 + 막대 그래프 1개 -->
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

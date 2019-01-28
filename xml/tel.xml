@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="euc-kr"?>
+<!-- Edited by Notepad-->
+<MyCompany>
+ <mem>
+  <part>영업</part>
+  <name>홍길동</name>
+  <tno>1111</tno>
+  <cell>01033334444</cell>
+  <birth>11/15</birth>
+ </mem>
+ <mem>
+  <part>관리</part>
+  <name>홍당무</name>
+  <tno>2222</tno>
+  <cell>01022220000</cell>
+  <birth>11/11</birth>
+ </mem>
+ <mem>
+  <part>개발</part>
+  <name>최말봉</name>
+  <tno>6153</tno>
+  <cell>01077775555</cell>
+  <birth>3333</birth>
+ </mem>
+ <mem>
+  <part>홍보</part>
+  <name>최고봉</name>
+  <tno>4444</tno>
+  <cell>01088889999</cell>
+  <birth>01/15</birth>
+ </mem>
+</MyCompany>

@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+  <title>jQuery UI</title>
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css"/>
+  <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+  <script src="http://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+
+  <!-- jQuery UI 국제화 대응을 위한 라이브러리 (다국어) -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/jquery-ui-i18n.min.js"></script>
+  <!-- <link rel="stylesheet" href="./css/jquery-ui.css" /> -->
+  <!-- <script src="./js/jquery-1.11.0.min.js"></script>
+  <script src="./js/jquery-ui.min.js"></script>
+  
+  jQuery UI 국제화 대응을 위한 라이브러리 (다국어)
+  <script src="./js/jquery-ui-i18n.min.js"></script>
+   -->
+  <!-- datepicker 한국어로 -->
+  <!-- <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/i18n/datepicker-ko.js"></script> -->
+  <script>
+    // 달력 한글화
+      var day_names = ['일', '월', '화', '수', '목', '금', '토'],
+        mon_names = ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        dateOpts = {
+          dateFormat: 'yy-mm-dd',
+          dayNames: day_names,
+          dayNamesShort: day_names,
+          dayNamesMin: day_names,
+          monthNames: mon_names,
+          monthNamesShort: mon_names,
+          monthNamesMin: mon_names,
+          constrainInput: true,
+          showMonthAfterYear: true,
+          yearSuffix: "",
+          changeMonth: true,
+          changeYear: true,
+          showOn: "button",
+          buttonImage: "./img/Calendar.png"
+        };
+        monthOpts = {
+          dateFormat: 'yy-mm',
+          dayNames: day_names,
+          dayNamesShort: day_names,
+          dayNamesMin: day_names,
+          monthNames: mon_names,
+          monthNamesShort: mon_names,
+          monthNamesMin: mon_names,
+          constrainInput: true,
+          showMonthAfterYear: true,
+          yearSuffix: "",
+          changeMonth: true,
+          changeYear: true,
+          showOn: "button",
+          buttonImage: "./img/Calendar.png"
+        };
+        yearOpts = {
+          dateFormat: 'yy',
+          dayNames: day_names,
+          dayNamesShort: day_names,
+          dayNamesMin: day_names,
+          monthNames: mon_names,
+          monthNamesShort: mon_names,
+          monthNamesMin: mon_names,
+          constrainInput: true,
+          showMonthAfterYear: true,
+          yearSuffix: "",
+          changeMonth: true,
+          changeYear: true,
+          showOn: "button",
+          buttonImage: "./img/Calendar.png"
+        };
+        periodOpts = {
+          dateFormat: 'yy-mm-dd',
+          dayNames: day_names,
+          dayNamesShort: day_names,
+          dayNamesMin: day_names,
+          monthNames: mon_names,
+          monthNamesShort: mon_names,
+          monthNamesMin: mon_names,
+          constrainInput: true,
+          showMonthAfterYear: true,
+          yearSuffix: "",
+          changeMonth: true,
+          changeYear: true,
+          showOn: "button",
+          buttonImage: "./img/Calendar.png",
+          defaultDate: "+1w",
+          numberOfMonths: 2
+        };
+    $(function() {
+      // $.datepicker.setDefaults($.datepicker.regional['ko']); //datepicker 한국어로 사용하기 위한 언어설정
+      // 옵션 적용
+      $('#date').datepicker(dateOpts);
+      $('#month').datepicker(monthOpts);
+      $('#year').datepicker(yearOpts);
+      // 오늘 날짜를 자동으로 입력
+      $('#date').datepicker({ defaultDate: new Date() }).datepicker("setDate", new Date());
+      $('#month').datepicker({ defaultDate: new Date() }).datepicker("setDate", new Date());
+      $('#year').datepicker({ defaultDate: new Date() }).datepicker("setDate", new Date());
+      
+      // 기간을 넣는 달력
+      var dateFormat = "yy-mm-dd",
+      from = $( "#startDate" )
+        .datepicker(periodOpts)
+        .on( "change", function() {
+          to.datepicker( "option", "minDate", getDate( this ) );
+        }),
+      to = $( "#endDate" ).datepicker(periodOpts)
+      .on( "change", function() {
+        from.datepicker( "option", "maxDate", getDate( this ) );
+      });
+ 
+    function getDate( element ) {
+      var date;
+      try {
+        date = $.datepicker.parseDate( dateFormat, element.value );
+      } catch( error ) {
+        date = null;
+      }
+ 
+      return date;
+    }
+  });
+
+  // 사용자가 입력한 날짜를 읽는다.
+  function readDate() {
+    var input = $("#date").val($.datepicker.formatDate('yy-mm-dd', new Date()));
+    alert("읽은 날짜 : " + input);
+  }
+  
+  // 사용자가 입력한 날짜에서 월까지 추출한다.
+  function saveMonth() {
+    var input = $("date").val();
+    var year = input.getFullYear();
+    alert("읽은 날짜 : " + year);
+  }
+  </script>
+ </head>
+
+        <body>
+          <p>
+            <input type="text" id="date" size="10" />
+            <button type="submit" id="btnSearchDate" onclick="readDate()">입력</button>
+          </p>
+          <p>
+            <input type="text" id="month" size="10" />
+            <button type="submit" id="btnSearchDate" onclick="saveMonth()">입력</button>
+          </p>
+          <p>
+            <input type="text" id="year" size="10" />
+          </p>
+          <p>
+            <input type="text" id="startDate" size="10" />
+            ~
+            <input type="text" id="endDate" size="10" />
+          </p>
+        </body>
+
+        </html>

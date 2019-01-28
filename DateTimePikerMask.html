@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>DateTimePicker Mask 활용</title>
+	<link rel="stylesheet" type="text/css" href="./css/jquery.datetimepicker.css" />
+	<script src="./js/jquery.js"></script>
+	<script src="./js/jquery.datetimepicker.full.min.js"></script>
+
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO"
+	 crossorigin="anonymous">
+
+	<style>
+		body {
+			margin: 20px
+		}
+	</style>
+
+	<script>
+		$(document).ready(function () {
+			// 연도와 월을 입력하는 셀렉트 박스를 만든다.
+			setDateBox();
+			setYearBox("yearOfyear");
+
+			// 달력을 한글로 설정한다.
+			$.datetimepicker.setLocale('ko');
+			
+			// 날짜 출력 부분을 설정한다.
+			$('#date').datetimepicker({
+				format: 'Y-m-d',
+				timepicker: false,
+				mask: true,
+				value: new Date()
+			});
+			
+			$('#fromDate').datetimepicker({
+				format: 'Y-m-d',
+				timepicker: false,
+				mask: true,
+				onShow: function (ct) {
+					this.setOptions({
+						maxDate: jQuery('#toDate').val() ? jQuery('#toDate').val() : false
+					})
+				},
+				value: new Date()
+			});
+			
+			var after5Days = new Date(); // 현재
+			after5Days.setDate(after5Days.getDate() + 5) // 날짜 + 5일
+			
+			$('#toDate').datetimepicker({
+				format: 'Y-m-d',
+				timepicker: false,
+				mask: true,
+				onShow: function (ct) {
+					this.setOptions({
+						minDate: jQuery('#fromDate').val() ? jQuery('#fromDate').val() : false
+					})
+				},
+				value: after5Days
+			});
+
+			// 검색 버튼을 누르면 날짜를 알림창으로 출력하는 함수를 호출한다.
+			$('#dateSearchBtn').click(function () {
+				onSelectDate(ReportTypes.date);
+			});
+
+			$('#monthSearchBtn').click(function () {
+				onSelectDate(ReportTypes.month);
+			});
+
+			$('#yearSearchBtn').click(function () {
+				onSelectDate(ReportTypes.year);
+			});
+
+			$('#periodSearchBtn').click(function () {
+				onSelectDate(ReportTypes.period);
+			});
+
+			// 연도와 월을 선택하는 셀렉트 박스의 초기값을 올해 연도와 월로 한다.
+			var currentYear = new Date().getFullYear();
+			var currentMonth = new Date().getMonth();
+			$("#year").val(currentYear);
+			$("#yearOfyear").val(currentYear);
+			$("#month").val(currentMonth);
+
+			// 달력 버튼을 누르면 달력이 생성된다.
+			$('#calendarBtn').on('click', function() {
+				$('#date').datetimepicker('show');
+			});
+			$('#fromDateCalendarBtn').on('click', function() {
+				$('#fromDate').datetimepicker('show');
+			});
+			$('#toDateCalendarBtn').on('click', function() {
+				$('#toDate').datetimepicker('show');
+			});
+		});
+
+		// select box 연도 표시
+		function setYearBox(id) {
+			var dt = new Date();
+			var year = "";
+			var com_year = dt.getFullYear();
+
+			// 올해 기준으로 -1년부터 +5년을 보여준다.
+			for (var y = (com_year - 1); y <= (com_year + 10); y++) {
+				$("#" + id).append("<option value='" + y + "'>" + y + " 년" + "</option>");
+			}
+		}
+
+		// select box 연도와 월 표시
+		function setDateBox() {
+			setYearBox("year");
+
+			for (var i = 0; i < 12; i++) {
+				$("#month").append("<option value='" + i + "'>" + (i + 1) + " 월" + "</option>");
+			}
+		}
+
+		// 레포트 하위 화면 종류
+		var ReportTypes = Object.freeze({ "date": 1, "month": 2, "year": 3, "period": 4 });
+
+		// 입력한 날짜를 화면에 알림창으로 출력한다.
+		function onSelectDate(type) {
+			if (type == ReportTypes.date) {
+				alert($('#date').val());
+			}
+			else if (type == ReportTypes.month) {
+				var currentMonth = new Date($('#year').val(), $('#month').val());
+				alert(currentMonth.getFullYear() + "년 " +
+				(currentMonth.getMonth() + 1) + "월");
+			}
+			else if (type == ReportTypes.year) {
+				var currentMonth = new Date($('#yearOfyear').val());
+				alert(currentMonth.getFullYear() + "년");
+			}
+			else {
+				alert($('#fromDate').val() + '~' + $('#toDate').val());
+			}
+		}
+	</script>
+</head>
+
+<body>
+	<input type="text" id="date" />
+	<button id="calendarBtn" style='margin-left: 10px'>
+		<img src="./img/Calendar.png"></button>
+	<button id="dateSearchBtn" style='margin-left: 10px'>검색</button><br><br>
+	<select id="year"></select><select id="month" style='margin-left: 10px'></select><button id="monthSearchBtn" style='margin-left: 10px'>검색</button><br><br>
+	<select id="yearOfyear"></select><button id="yearSearchBtn" style='margin-left: 10px'>검색</button><br><br>
+	<input type="text" id="fromDate" /><button id="fromDateCalendarBtn" style='margin-left: 10px'>
+		<img src="./img/Calendar.png"></button>
+		 ~ <input type="text" id="toDate" />
+		 <button id="toDateCalendarBtn" style='margin-left: 10px'>
+			<img src="./img/Calendar.png"></button>
+	<button id="periodSearchBtn" style='margin-left: 10px'>검색</button><br><br>
+</body>
+
+</html>

@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="author" content="Jobboard">
+
+    <script>
+            //해당 샘플에 국한됨. JS를 이 서버가 아닌 다른 서버에서 로딩함 
+            jsReplacer = ['/include/', 'http://office.devzone.co.kr:8053/include/'];
+        </script>
+        <!-- 무조건 필요(JS 순차적 로더/중복 방지/Load Complete 시점 관리/안에서 JQuery inlcude및 iasmj 생성등)-->
+        <script type="text/javascript" src='http://office.devzone.co.kr:8053/Include/js/Base/iasmLoader.js'></script>
+    
+        <script>        
+            //사용할 메인 스크립트 추가
+            AddScript('/include/js/Project/tw.js');
+            AddScript('/Include/js/Base/SimpleSocket.js');        
+    
+            // 메인 화면의 막대 그래프
+            var barChart;
+    
+            //인버터 개수
+            var invCount = 0;
+    
+            //Loader Complete
+            function AllScriptLoaded() {
+                //발전소 정보 로딩
+                LoadPlantInfo(function () {
+    
+                    //인버터 정보 표시
+                    iasmj.each(HardWares, function (index, value) {
+    
+                        if (value["ModuleType"] == 3) {
+                            invCount++;
+                            var UniqueHWNo = value["UniqueHWNo"];
+                            $("#invtable").find('tbody')
+                                .append($('<tr>')
+                                    .append($('<td>')
+                                        .attr('id', 'hw' + UniqueHWNo + '')
+                                        .text(value['ModuleName'])
+                                    )
+                                    .append($('<td>')
+                                        .append($('<span>')
+                                            .addClass('padding-right')
+                                            .attr('id', '' + UniqueHWNo + '_27')
+                                        )
+                                        .append('MWh')
+                                    )
+                                    .append($('<td>')
+                                        .append($('<span>')
+                                            .addClass('padding-right')
+                                            .attr('id', '27_' + UniqueHWNo + '_D')
+                                        )
+                                        .append('kWh')
+                                    )
+                                    .append($('<td>')
+                                        .append($('<i>')
+                                            .addClass('i_green fas fa-circle')
+                                        )
+                                    )
+                            );
+                        }
+                    });
+    
+    
+                    info = new iasmWebScoketClientinfo();				//소켓 기본 정보(위의 스크립트가 모두 로딩되야 사용이 가능)
+    
+                    //기본 옵션
+                    info.BaseServer = "office.devzone.co.kr";          //해당 프로젝트 기본 서버 주소 (단 ws 쿼리로 바꿀수 있음)
+                    info.BasePort = 8117;                              //해당 프로젝트 기본 WS 포트 (단 port 쿼리로 바꿀수 있음)
+    
+                    //설정 않해도 되는 항목
+                    info.LimitID = "SWOS";         //인버터 ID (요청한 키의 상위 구분이 있는경우, 변종은 센서키, 테크윈은 인버터Serial번호에 해당됨)
+    
+                    //수신할 키 추가
+                    for (i = 0; i < invCount; i++) {
+                        var uniut = (i + 1);
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@39");  //출력 전압
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@32");  //출력 전류
+    
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@21");  //인버터입력 전압
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@22");  //인버터입력 전류
+    
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@35");  //인버터입력 유료 전력
+    
+                        BDDataKeyAdd(info.LimitID + "##" + uniut + "@27");  //누적생산량
+                        BDDataKeyAdd(info.LimitID + "##27#" + uniut + "#D");  //당일생산량(통계데이터)
+    
+    
+                    }
+    
+                    //전역데이터(전체 통계형)
+                    BDDataKeyAdd(info.LimitID + "##300#0#D");    //금일 발전량
+                    BDDataKeyAdd(info.LimitID + "##300#0#DP");   //전일 발전량
+                    BDDataKeyAdd(info.LimitID + "##300");        //금일 발전량          
+    
+                    IASMSocketConnect(); //소켓 연결
+    
+                    setTimeout(tw_Calculator, 1000);    //연산기 실행
+    
+                });
+    
+                doStuff();
+    
+                // 가져온 발전량 데이터
+                var powerData = new Array();
+    
+                // 발전량 데이터를 차트에 표시한다.
+                iasmj.getJSON("http://office.devzone.co.kr:8117/JSON/HISTORYH/THD1/SWOS/300/0/", function (data) {
+                    var items = new Array();
+                    iasmj.each(data, function (key, val) {
+                      items.push(val);
+                    });
+                    powerData = items;
+    
+                    // 차트를 실행한다.
+                    runChart(powerData);
+    
+    
+                });
+    
+                // 날씨를 실행한다.
+                runWeather();
+    
+            }
+    
+            //이벤트 처리
+            function Custom_AutoRecever(thiskey, value, createtime, receivetime, wDataReceiveMode, wAutoDisplayedCount, valuePassMins) {
+    
+                //기본 공통 처리 by tw.js
+                tw_AutoRecever(thiskey, value, createtime, receivetime, wDataReceiveMode, wAutoDisplayedCount, valuePassMins);
+            }
+    
+        </script>
+
+    <!-- 차트 라이브러리 -->
+    <script src="./js/Chart.bundle.js"></script>
+    <script src="./js/Chart.bundle.min.js"></script>
+    <script src="./js/Chart.js"></script>
+    <script src="./js/Chart.min.js"></script>
+
+    <!-- Datepicker -->
+	<link rel="stylesheet" type="text/css" href="./css/jquery.datetimepicker.css" />
+	<script src="./js/jquery-1.11.0.min.js"></script>
+	<script src="./js/jquery.datetimepicker.full.min.js"></script>
+    <script>
+       function runChart(powerData) {
+      // 빈 차트를 만든다.
+      var verticalBarChart = drawChart(powerData);
+
+      function drawChart(powerData) {
+        // 그래프 그리기
+        var gridColor = '#dedede';
+        var graphColor = ['#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff',
+          '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff',
+          '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff',
+          '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff', '#00b0ff'
+        ];
+
+        // 막대 그래프를 만든다.
+        var ctx = document.getElementById("verticalBarChart");
+
+        var todayOutput = new Array();
+        var yesterdayOutput = new Array();
+        
+        var slopeIrradiationDatas = [0, 0, 0, 0.2, 0.7, 1.5, 2.3, 3.1,
+          3.3, 3.6, 3.4, 3.2, 2.8, 1.9, 0.9, 0.4, 0.1, 0, 0
+        ];
+        var horizontalIrradiationDatas = [0, 0, 0, 0.5, 1.0, 1.8, 2.6,
+          3.4, 3.6, 3.9, 3.7, 3.5, 3.1, 2.2, 1.2, 0.7, 0.4, 0, 0
+        ];
+        var solarCellTemperatureDatas = [4.5, 4.4, 4.3, 4.5, 4.5, 5.0,
+          6.5, 6.9, 8.0, 8.5, 8.6, 8.0, 7.6, 7.2, 6.7, 6.1, 5.8, 5.7, 5.4
+        ];
+        var atmosphericTemperatureDatas = [0.5, 0.4, 0.3, 0.5, 0.5, 1.0,
+          2.5, 2.9, 4.0, 4.5, 4.6, 4.0, 3.6, 3.2, 2.7, 2.1, 1.8, 1.7, 1.4
+        ];
+
+        var slopeIrradiationText = '경사 일사량(MJ/㎡)';
+        var horizontalIrradiationText = '수평 일사량(MJ/㎡)';
+        var atmosphericTemperatureText = '대기 온도(℃)';
+        var solarCellTemperatureText = '모듈 온도(℃)';
+        var irradiationText = '일사량(MJ/㎡)';
+        var temperatureText = '온도(℃)';
+        var todayOutputText = '오늘 발전량(kWh)';
+        var yesterdayOutputText = '어제 발전량(kWh)';
+
+        // 영역 차트의 배경색 설정
+        var firstLineChartColor = "#004D77";
+        var secondLineChartColor = "#009688";
+        var thirdLineChartColor = "#00b0ff";
+        var color = Chart.helpers.color;
+        var firstLineChartBGColor = color(firstLineChartColor).alpha(0.1).rgbString();
+        var secondLineChartBGColor = color(secondLineChartColor).alpha(0.1).rgbString();
+        var todayPowerChartBGColor = color(thirdLineChartColor).alpha(0.5).rgbString();
+        var yesterdayPowerChartBGColor = color(thirdLineChartColor).alpha(0.3).rgbString();
+        var labels = ["4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00",
+          "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00",
+          "18:00", "19:00", "20:00", "21:00", "22:00"];
+
+        var i = 0; // 어제 발전량의 인덱스
+        var j = 0; // 오늘 발전량의 인덱스
+        for (var index = 0; index < powerData.length; index++) {
+          // 어제 4시부터 22시까지 발전량을 추출한다.
+          if (index >= 4 && index < 23) {
+            yesterdayOutput[i] = powerData[index];
+            i++;
+          }
+          // 금일 4시부터 22시까지 발전량을 추출한다.
+          else if (index >= 28 && index < 47) {
+            todayOutput[j] = powerData[index];
+            j++;
+          }
+        }
+
+        // 첫 번째 차트의 옵션(영역 그래프 2개 + 막대 그래프 1개)을 정한다.
+        var chartOption =
+        {
+          type: 'bar',
+          data:
+          {
+            labels: labels,
+            datasets: [
+              {
+                // Changes this dataset to become a line
+                type: 'line',
+                label: slopeIrradiationText,
+                data: slopeIrradiationDatas,
+                fill: 'origin',
+                yAxisID: "y-axis-2",
+                borderColor: firstLineChartColor,
+                backgroundColor: firstLineChartBGColor,
+                pointBackgroundColor: firstLineChartColor,
+                borderWidth: 0.5
+              },
+              {
+                // Changes this dataset to become a line
+                type: 'line',
+                label: horizontalIrradiationText,
+                data: horizontalIrradiationDatas,
+                fill: 'origin',
+                yAxisID: "y-axis-2",
+                borderColor: secondLineChartColor,
+                backgroundColor: secondLineChartBGColor,
+                pointBackgroundColor: secondLineChartColor,
+                borderWidth: 0.5
+              },
+              {
+                label: yesterdayOutputText,
+                data: yesterdayOutput,
+                fill: false,
+                yAxisID: "y-axis-1",
+                borderColor: graphColor,
+                backgroundColor: yesterdayPowerChartBGColor,
+                borderWidth: 1
+              },
+              {
+                label: todayOutputText,
+                data: todayOutput,
+                fill: false,
+                yAxisID: "y-axis-1",
+                borderColor: graphColor,
+                backgroundColor: todayPowerChartBGColor,
+                borderWidth: 1
+              }
+            ]
+          },
+          options: {
+            // Boolean - whether or not the chart should be responsive and resize when the browser does.
+            responsive: true,
+
+            // Boolean - whether to maintain the starting aspect ratio or not when responsive, if set to false, will take up entire container
+            maintainAspectRatio: false,
+            title: {
+              display: false,
+              text: "태양 전지 온도",
+              fontSize: 12,
+              position: 'bottom'
+            },
+            scales: {
+              yAxes: [{
+                type: "linear",
+                display: true,
+                position: "left",
+                id: "y-axis-1",
+                scaleLabel: {
+                  display: true,
+                  labelString: todayOutputText
+                }
+              }, {
+                type: "linear",
+                display: true,
+                position: "right",
+                id: "y-axis-2",
+                gridLines: {
+                  drawOnChartArea: false, // only want the grid lines for one axis to show up
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: irradiationText
+                },
+              }
+              ],
+              xAxes: [{
+                barThickness: 10,
+                gridLines: {
+                  drawBorder: false,
+                  color: 'white'
+                }
+              }]
+            }
+          }
+        };
+        
+        var verticalBarChart;
+        if (powerData != null)
+        {
+            verticalBarChart = new Chart(ctx, chartOption);
+        }
+
+        return verticalBarChart;
+      }
+      // 라디오 버튼을 클릭하면 해당 데이터를 반영한 차트로 갱신한다.
+      function handleClick(myRadio) {
+        var slopeIrradiationDatas = [0, 0, 0, 0.2, 0.7, 1.5, 2.3, 3.1,
+          3.3, 3.6, 3.4, 3.2, 2.8, 1.9, 0.9, 0.4, 0.1, 0, 0
+        ];
+        var horizontalIrradiationDatas = [0, 0, 0, 0.5, 1.0, 1.8, 2.6,
+          3.4, 3.6, 3.9, 3.7, 3.5, 3.1, 2.2, 1.2, 0.7, 0.4, 0, 0
+        ];
+        var solarCellTemperatureDatas = [4.5, 4.4, 4.3, 4.5, 4.5, 5.0,
+          6.5, 6.9, 8.0, 8.5, 8.6, 8.0, 7.6, 7.2, 6.7, 6.1, 5.8, 5.7, 5.4
+        ];
+        var atmosphericTemperatureDatas = [0.5, 0.4, 0.3, 0.5, 0.5, 1.0,
+          2.5, 2.9, 4.0, 4.5, 4.6, 4.0, 3.6, 3.2, 2.7, 2.1, 1.8, 1.7, 1.4
+        ];
+        var slopeIrradiationText = '경사 일사량(MJ/㎡)';
+        var horizontalIrradiationText = '수평 일사량(MJ/㎡)';
+        var atmosphericTemperatureText = '대기 온도(℃)';
+        var solarCellTemperatureText = '모듈 온도(℃)';
+        var irradiationText = '일사량(MJ/㎡)';
+        var temperatureText = '온도(℃)';
+        var outputText = '발전량(kWh)';
+        // 일사량 라디오 버튼을 클릭하면
+        if (myRadio.id == "irradiation") {
+          // 온도 라디오 버튼의 상태를 수정한다.
+          document.getElementById("temperature").checked = false;
+
+          // 선 그래프의 범례를 일사량으로 수정한다.
+          verticalBarChart.data.datasets[0].label = slopeIrradiationText;
+          verticalBarChart.data.datasets[1].label = horizontalIrradiationText;
+
+          // 오른쪽 축 제목을 일사량으로 수정한다.
+          verticalBarChart.options.scales.yAxes[1].scaleLabel.labelString = irradiationText;
+
+          // 일사량 데이터를 수정한다.
+          verticalBarChart.data.datasets[0].data = slopeIrradiationDatas;
+          verticalBarChart.data.datasets[1].data = horizontalIrradiationDatas;
+        }
+        // 온도 라디오 버튼을 클릭하면
+        else {
+          // 일사량 라디오 버튼의 상태를 수정한다.
+          document.getElementById("irradiation").checked = false;
+
+          // 선 그래프의 범례를 온도로 수정한다.
+          verticalBarChart.data.datasets[0].label = atmosphericTemperatureText;
+          verticalBarChart.data.datasets[1].label = solarCellTemperatureText;
+
+          // 오른쪽 축 제목을 온도로 수정한다.
+          verticalBarChart.options.scales.yAxes[1].scaleLabel.labelString = temperatureText;
+
+          // 온도 데이터를 수정한다.
+          verticalBarChart.data.datasets[0].data = atmosphericTemperatureDatas;
+          verticalBarChart.data.datasets[1].data = solarCellTemperatureDatas;
+        }
+        verticalBarChart.update();
+      }
+
+      // 라디오 버튼을 클릭하면 일사량 데이터를 출력한다.
+      iasmj('#irradiation').click(function () {
+        handleClick(this, verticalBarChart);
+      });
+
+      // 라디오 버튼을 클릭하면 온도 데이터를 출력한다.
+      iasmj('#temperature').click(function () {
+        handleClick(this, verticalBarChart);
+      });
+    }
+    </script>
+</head>
+
+<body>
+    <div class="main">
+        <!-- MAIN CONTENT -->
+        <div class="main-content">
+            <div class="container-fluid">
+                <h3 class="page-title">일별(시간) 발전현황</h3>
+                <!-- Datepicker -->
+                <div class="row padding_row">
+                    <span style="" class="s_b2">일별 선택</span>
+                    <div class="col-md-3">
+                        <div class="form-group">
+                            <input type="text" class="form2" id="date">
+                            <button id="calendarBtn" class="datebtn">
+                                <img src="./img/Calendar.png"></button>
+                            <button id="dateSearchBtn" type="button" class="btn-secondary" onClick="drawChart();">
+                                검색
+                            </button>
+                            <span class="eaxl"><button type="button" class="eaxl_btn btn-block"><img src="./img/excel.png"></button></span>
+                        </div>
+                    </div>
+                </div>
+                <!-- DatepickerEnd -->
+                <div class="row padding_row">
+                    <div class="col-lg-11">
+                        <div class="main_radio_div">
+                            <input type="radio" id="irradiation" checked=true>
+                            <label class="l_padding" for="irradiation">일사량(W/㎡)</label>
+                            </input>
+                            <input type="radio" id="temperature">
+                            <label for="temperature">온도(℃)</label>
+                            </input>
+                        </div>
+                        <canvas id="verticalBarChart"></canvas>
+                    </div>
+                </div>
+                <div class="row padding_row">
+                    <div class="col-lg-11">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-condensed ">
+                                <thead>
+                                        <th>시간(h)</th>
+                                        <th>발전량(kWh)</th>
+                                        <th>수평 일사량(W/㎡)</th>
+                                        <th>경사 일사량(W/㎡)</th>
+                                        <th>모듈 온도(℃)</th>
+                                        <th>대기 온도(℃)</th>    
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+    </section>
+    <footer>
+        <div class="fo_text">
+            <p>본사 및 공장 : 충북 청주시 흥덕구 직지대로 474번길 60(송정동)</p>
+            <p>문의전화 : 043-261-8114 | 이메일 : sales@techwin.co.kr | 홈페이지 : http://www.techwin.co.kr</p>
+            </div>
+    </footer>
+</body>

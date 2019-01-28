@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Chart.js IE8 Demo</title>
+</head>
+<body>
+  <!-- Chart container -->
+  <div id="myCanvas"></div>
+
+  <!-- excanvas.js is necessary for IE8 -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/canvasjs/1.7.0/excanvas.js"></script>
+
+  <!--
+    Use Chart.js 1.x only! IE8 support is dropped in version 2.x
+    1.x Documentation: https://github.com/chartjs/Chart.js/tree/v1.1.1/docs
+  -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/1.1.1/Chart.min.js"></script>
+
+  <script>
+  // Helper function for creating a usable canvas for IE8.
+  function createCanvas(width, height) {
+    // Dynamically create the canvas element
+    var c = document.createElement('canvas');
+    // Define width and height of the canvas, or else IE8 complains
+    c.width = width;
+    c.height = height;
+    // getContext() is not defined on canvas in IE8, so use excanvas.js to bootstrap the canvas
+    if (!c.getContext) {
+      c = G_vmlCanvasManager.initElement(c);
+    }
+    return c;
+  }
+
+  (function() {
+    var lineData = {
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
+      datasets: [
+        {
+          label: "My First dataset",
+          fillColor: "rgba(220,220,220,0.2)",
+          strokeColor: "rgba(220,220,220,1)",
+          pointColor: "rgba(220,220,220,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(220,220,220,1)",
+          data: [65, 59, 80, 81, 56, 55, 40]
+        },
+        {
+          label: "My Second dataset",
+          fillColor: "rgba(151,187,205,0.2)",
+          strokeColor: "rgba(151,187,205,1)",
+          pointColor: "rgba(151,187,205,1)",
+          pointStrokeColor: "#fff",
+          pointHighlightFill: "#fff",
+          pointHighlightStroke: "rgba(151,187,205,1)",
+          data: [28, 48, 40, 19, 86, 27, 90]
+        }
+      ]
+    };
+    var lineOptions = {
+      animation: false  // Animations lags in IE8 :(
+    };
+
+    var elm = document.getElementById("myCanvas");
+    var cnvs = createCanvas(600, 450);
+    elm.appendChild(cnvs);  // Attach canvas to the DOM
+    var ctx = cnvs.getContext('2d');
+    new Chart(ctx).Line(lineData, lineOptions);
+  })();
+  </script>
+</body>
+</html>

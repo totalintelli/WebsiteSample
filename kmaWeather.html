@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=EUC-KR">
+<title>Javascript에서 DOM 사용</title>
+<script type="text/javascript">
+    function domTest() {
+        //1단계. XML 파일 불러오기 -> DOM tree 형성
+        // 2단계. root 노드(엘리먼트) 접근
+        // 3단계. 특정 노드(엘리먼트) 접근
+        // 4단계. 특정 노드(엘리먼트)의 텍스트(노드) 접근
+
+        // Internet Explorer 전용
+        var xmlDoc = new ActiveXObject("Msxml2.DOMDocument.6.0");
+        xmlDoc.load("weather1.xml");
+
+        var root = xmlDoc.documentElement;
+        var str = "";
+        str += "<br>" + root.nodeName + "<br><br>";
+
+        var bookNodes = root.getElementsByTagName("book");
+        // var bookNode = bookNodes[0]
+        for (var i = 0; i < bookNodes.length; i++) {
+            var bookNode = bookNodes[i];
+            var isbn = bookNode.getAttribute("isbn");
+            var titleNode = bookNode.getElementsByTagName("title")[0];
+            var authorNode = bookNode.getElementsByTagName("author")[0];
+            var priceNode = bookNode.getElementsByTagName("price")[0];
+
+            str += "isbn : " + isbn + "<br>"
+                + "제목 : " + titleNode.text + "<br>"
+                + "저자 : " + authorNode.text + "<br>"
+                + "가격 : " + priceNode.text + "<br><br>";
+        }
+
+        var divTag = document.getElementById("result");
+        divTag.innerHTML = str;
+    }
+</script>
+</head>
+<body>
+<div>DOM 테스트</div>
+<div>
+    <input type="button" value="XML DOM" onclick="domTest()">
+</div>
+<div id="result"></div>
+</body>
+</html>
+

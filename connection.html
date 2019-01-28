@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>접속반</title>
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.6.1/css/all.css"
+      integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP"
+      crossorigin="anonymous"
+    />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+    <style>
+      table {
+        border: 1px #ccc solid;
+        border-collapse: collapse;
+        text-align: center;
+        color: #ffffff;
+        min-width: 50px;
+      }
+      td {
+        border: 1px #ccc solid;
+        width: 140px;
+      }
+      .i_red {
+        color: red;
+      }
+      .i_green {
+        color: green;
+      }
+      .table > thead > tr {
+        font-size: 0.9em;
+      }
+      .table > thead > tr > th {
+        padding: 8px;
+      }
+      .connection {
+        background-color: black;
+        padding: 18px 10px;
+      }
+    </style>
+    <script>
+      var apiURL = "/getAllItems";
+      var data = [];
+      var option = [
+        { field: "접속반명" },
+        { field: "통신상태" },
+        { field: "전체전압" },
+        { field: "전체전류" },
+        { field: "Ch1" },
+        { field: "Ch2" },
+        { field: "Ch3" },
+        { field: "Ch4" },
+        { field: "Ch5" },
+        { field: "Ch6" },
+        { field: "Ch7" },
+        { field: "Ch8" },
+        { field: "Ch9" },
+        { field: "Ch10" },
+        { field: "Ch11" },
+        { field: "Ch12" },
+        { field: "Ch13" },
+        { field: "Ch14" },
+        { field: "Ch15" },
+        { field: "내부온도" }
+      ];
+
+      //commented your Ajax for testing.
+
+      //   $.getJSON(apiURL, function(datas) {
+      //     $.each(datas, function(key, val) {
+      //       data.push(val);
+      //     });
+      //   });
+
+      //get the data varable set
+
+      data = [
+        {
+          접속반명: "A-1",
+          통신상태: "불량",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          내부온도: 0.0
+        },
+        {
+          접속반명: "A-2",
+          통신상태: "불량",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          내부온도: 0.0
+        },
+        {
+          접속반명: "A-3",
+          통신상태: "불량",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          Ch15: 0.0,
+          내부온도: 0.0
+        },
+        {
+          접속반명: "A-4",
+          통신상태: "불량",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          Ch15: 0.0,
+          내부온도: 0.0
+        },
+        {
+          접속반명: "A-5",
+          통신상태: "불량",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          내부온도: 0.0
+        },
+        {
+          접속반명: "A-6",
+          통신상태: "정상",
+          전체전압: 0.0,
+          전체전류: 0.0,
+          Ch1: 0.0,
+          Ch2: 0.0,
+          Ch3: 0.0,
+          Ch4: 0.0,
+          Ch5: 0.0,
+          Ch6: 0.0,
+          Ch7: 0.0,
+          Ch8: 0.0,
+          Ch9: 0.0,
+          Ch10: 0.0,
+          Ch11: 0.0,
+          Ch12: 0.0,
+          Ch13: 0.0,
+          Ch14: 0.0,
+          내부온도: 0.0
+        }
+      ];
+
+      //begin creating table on load.
+      window.onload = function() {
+        //create table element.
+        var makeTable = $("<table>");
+        //append table to existing div here it have class "test".
+        $(".connection").append($(makeTable));
+        //append first row for headings.
+        $(makeTable).append($("<tr>"));
+
+        //append all heading in loop.
+        $.each(option, function(i, dt) {
+          //simply find first tr and append td with content to it.
+          $(makeTable)
+            .find("tr")
+            .append("<td>" + dt["field"] + "</td>");
+        });
+
+        // start appending data.
+        $.each(data, function(i, row) {
+          //find tbody in table and add tr to it.
+          var nrow = $(makeTable)
+            .find("tbody")
+            .append("<tr>");
+          //for each options find its value in data and append to newly created tr above.
+          $.each(option, function(j, dt) {
+            // this is actually what you want..
+            if (row[dt["field"]] == undefined) {
+              $(nrow).append("<td> </td>");
+            } else if (row[dt["field"]] == "불량") {
+              $(nrow).append("<td><i class = 'i_red fas fa-circle'></i></td>");
+            } else if (row[dt["field"]] == "정상") {
+              $(nrow).append("<td><i class='i_green fas fa-circle'></i></td>");
+            } else {
+              $(nrow).append("<td>" + row[dt["field"]] + "</td>");
+            }
+          });
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <h3>접속반</h3>
+    <div class="connection"></div>
+  </body>
+</html>

@@ -1,0 +1,74 @@
+<html>
+
+<head>
+  <title> 캔버스 연구 </title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+</head>
+
+<body>
+  <canvas id="barChart" width="600" height="300"></canvas>
+  <script>
+    var ctx = document.getElementById("barChart");
+    ctx.style.backgroundColor = 'rgba(255,0,0,255)';
+    var barChart = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ["Label1", "Label2", "Label3", "Label4"],
+        borderColor: "#fffff",
+        datasets: [{
+          data: ["2", "3", "1", "4"],
+          borderColor: "#fff",
+          borderWidth: "3",
+          hoverBorderColor: "#000",
+          backgroundColor: [
+            "#f38b4a",
+            "#56d798",
+            "#ff8397",
+            "#6970d5"
+          ],
+          hoverBackgroundColor: [
+            "#f38b4a",
+            "#56d798",
+            "#ff8397",
+            "#6970d5"
+          ]
+        }]
+      },
+      options: {
+        scales: {
+          yAxes: [{
+            ticks: {
+              min: 0,
+              stepSize: 1,
+              fontColor: "#000",
+              fontSize: 14
+            },
+            gridLines: {
+              color: "#000",
+              lineWidth: 2,
+              zeroLineColor: "#000",
+              zeroLineWidth: 2
+            },
+            stacked: true
+          }],
+          xAxes: [{
+            ticks: {
+              fontColor: "#000",
+              fontSize: 14
+            },
+            gridLines: {
+              color: "#fff",
+              lineWidth: 2
+            }
+          }]
+        },
+        responsive: false
+      }
+    });
+  </script>
+</body>
+
+</html>

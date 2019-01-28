@@ -1,0 +1,94 @@
+<html>
+
+<head>
+	<title>Using Flatpickr</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/themes/dark.css">
+</head>
+
+<body>
+	<h1>Flatpickr</h1>
+	<hr>
+	<div>
+		<h2>Input Date</h2>
+		<input type="text" id="date" placeholder="Please select date" data-input>
+		<h2>Input Month</h2>
+		<input type="text" id="month" placeholder="Please select month" data-input>
+		<h2>Input Year</h2>
+		<input type="text" id="year" placeholder="Please select year" data-input>
+		<h2>Range Datetime</h2>
+		<input type="text" id="rangeDate" placeholder="Please select Date Range" data-input>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.2.3/flatpickr.js"></script>
+	<script>
+		var shorthandWeekdaysKor = ['토', '일', '월', '화', '수', '목', '금'];
+		var longhandWeekDaysKor = ['토요일', '일요일', '월요일', '화요일', '수요일',
+			'목요일', '금요일'];
+		var monthsKor = ['1월', '2월', '3월', '4월', '5월', '6월', '7월',
+			'8월', '9월', '10월', '11월', '12월'];
+		$("#date").flatpickr({
+			enableTime: false,
+			dateFormat: "Y-m-d",
+			locale: {
+				firstDayOfWeek: 1,
+				weekdays: {
+					shorthand: shorthandWeekdaysKor,
+					longhand: longhandWeekDaysKor
+				},
+				months: {
+					shorthand: monthsKor,
+					longhand: monthsKor
+				}
+			}
+		});
+		$("#month").flatpickr({
+			enableTime: false,
+			dateFormat: "Y-m",
+			locale: {
+				firstDayOfWeek: 1,
+				weekdays: {
+					shorthand: shorthandWeekdaysKor,
+					longhand: longhandWeekDaysKor
+				},
+				months: {
+					shorthand: monthsKor,
+					longhand: monthsKor
+				}
+			}
+		});
+		$("#year").flatpickr({
+			enableTime: false,
+			dateFormat: "Y",
+			locale: {
+				firstDayOfWeek: 1,
+				weekdays: {
+					shorthand: shorthandWeekdaysKor,
+					longhand: longhandWeekDaysKor
+				},
+				months: {
+					shorthand: monthsKor,
+					longhand: monthsKor
+				}
+			}
+		});
+		$("#rangeDate").flatpickr({
+			mode: 'range',
+			dateFormat: "Y-m-d",
+			locale: {
+				firstDayOfWeek: 1,
+				weekdays: {
+					shorthand: shorthandWeekdaysKor,
+					longhand: longhandWeekDaysKor
+				},
+				months: {
+					shorthand: monthsKor,
+					longhand: monthsKor
+				}
+			}
+		});
+	</script>
+</body>
+
+
+</html>
