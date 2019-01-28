@@ -112,7 +112,8 @@
       });
       $("#rangeDate").flatpickr({
         mode: "range",
-        dateFormat: "Y-m-d"
+        dateFormat: "Y-m-d",
+        defaultDate: [new Date(), new Date()]
       });
       $("#timePicker").flatpickr({
         enableTime: true,
