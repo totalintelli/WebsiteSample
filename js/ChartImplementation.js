@@ -1,11 +1,3 @@
-// JSON 파싱 구현
-//해당 샘플에 국한됨. JS를 이 서버가 아닌 다른 서버에서 로딩함
-jsReplacer = ["/include/", "http://office.devzone.co.kr:8053/include/"];
-
-//사용할 메인 스크립트 추가
-AddScript("/include/js/Project/tw.js");
-AddScript("/Include/js/Base/SimpleSocket.js");
-
 function removePreviousGraph() {
   var verticalBarChartContent = document.getElementById(
     "verticalBarChartContent"
