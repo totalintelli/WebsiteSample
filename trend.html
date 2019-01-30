@@ -1,0 +1,189 @@
+<html>
+  <head>
+    <title>트랜드 그래프 연구</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <style>
+      #canvas {
+        width: 100%;
+        height: 80%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>일일 트랜드</h1>
+    <h2>일자 범위 : 2019-01-01 ~ 2019-01-31</h2>
+    <div><canvas id="canvas"></canvas></div>
+    <script>
+      var chartColors = {
+        red: "rgb(255, 99, 132)",
+        orange: "rgb(255, 159, 64)",
+        yellow: "rgb(255, 205, 86)",
+        green: "rgb(75, 192, 192)",
+        blue: "rgb(54, 162, 235)",
+        purple: "rgb(153, 102, 255)",
+        grey: "rgb(231,233,237)"
+      };
+
+      var randomScalingFactor = function() {
+        return (
+          (Math.random() > 0.5 ? 1.0 : 0.0) * Math.round(Math.random() * 100)
+        );
+      };
+      var MONTHS = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ];
+      var DAYS = new Array();
+      var today = new Date();
+      var dayCount =
+        32 - new Date(today.getYear(), today.getMonth() - 1, 32).getDate();
+      var monthText = (today.getMonth() + 1).toString();
+      var startHour = 5;
+      var endHour = 20;
+      var hourCount = endHour - startHour;
+      var medianHourCount = Math.round(hourCount / 2); // 중간값
+      var currentHour = today.getHours(); // 현재 시간
+      var totalCount = dayCount * hourCount; // 데이터 총 개수
+      // x 축 라벨을 만든다.
+      for (let i = 0; i < dayCount; i++) {
+        DAYS[i] = new Array();
+        for (let j = 0; j < hourCount; j++) {
+          DAYS[i][0] = monthText + " " + "월" + " " + (i + 1) + " " + "일";
+        }
+      }
+
+      // 무작위 데이터를 만든다.
+      var randomData = new Array(); // 무작위 데이터
+      for (let index = 0; index < totalCount; index++) {
+        randomData[index] = 1;
+      }
+
+      var irradiationText = "일사량(MJ/㎡)";
+      var todayOutputText = "당일 발전량(kWh)";
+      var config = {
+        data: {
+          labels: DAYS,
+          datasets: [
+            {
+              type: "bar",
+              label: "INV-1",
+              yAxisID: "y-axis-1",
+              backgroundColor: chartColors.red,
+              borderColor: chartColors.red,
+              data: randomData,
+              fill: false,
+              borderWidth: 1
+            },
+            {
+              type: "bar",
+              label: "INV-2",
+              yAxisID: "y-axis-1",
+              backgroundColor: chartColors.orange,
+              borderColor: chartColors.orange,
+              data: randomData,
+              fill: false,
+              borderWidth: 1
+            },
+            {
+              type: "bar",
+              label: "INV-3",
+              yAxisID: "y-axis-1",
+              backgroundColor: chartColors.green,
+              borderColor: chartColors.green,
+              data: randomData,
+              fill: false,
+              borderWidth: 1
+            },
+            {
+              type: "bar",
+              label: "INV-4",
+              yAxisID: "y-axis-1",
+              backgroundColor: chartColors.blue,
+              borderColor: chartColors.blue,
+              data: randomData,
+              fill: false,
+              borderWidth: 1
+            },
+            {
+              type: "bar",
+              label: "INV-5",
+              yAxisID: "y-axis-1",
+              backgroundColor: chartColors.purple,
+              borderColor: chartColors.purple,
+              data: randomData,
+              fill: false,
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          title: {
+            display: true,
+            text: "Chart.js Line Chart"
+          },
+          tooltips: {
+            mode: "label"
+          },
+          hover: {
+            mode: "nearest",
+            intersect: true
+          },
+          scales: {
+            yAxes: [
+              {
+                type: "linear",
+                display: true,
+                position: "left",
+                id: "y-axis-1",
+                scaleLabel: {
+                  display: true,
+                  labelString: todayOutputText
+                }
+              },
+              {
+                type: "linear",
+                display: true,
+                position: "right",
+                id: "y-axis-2",
+                gridLines: {
+                  drawOnChartArea: false // only want the grid lines for one axis to show up
+                },
+                scaleLabel: {
+                  display: true,
+                  labelString: irradiationText
+                }
+              }
+            ],
+            xAxes: [
+              {
+                barThickness: 10,
+                gridLines: {
+                  drawBorder: false,
+                  color: "white"
+                }
+              }
+            ]
+          }
+        }
+      };
+
+      var ctx = document.getElementById("canvas").getContext("2d");
+      window.myLine = new Chart(ctx, config);
+    </script>
+  </body>
+</html>
