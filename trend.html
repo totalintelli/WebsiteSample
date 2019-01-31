@@ -58,18 +58,23 @@
       var medianHourCount = Math.round(hourCount / 2); // 중간값
       var currentHour = today.getHours(); // 현재 시간
       var totalCount = dayCount * hourCount; // 데이터 총 개수
+
       // x 축 라벨을 만든다.
+      var k = 0; // x 축 라벨 인덱스
       for (let i = 0; i < dayCount; i++) {
-        DAYS[i] = new Array();
         for (let j = 0; j < hourCount; j++) {
-          DAYS[i][0] = monthText + " " + "월" + " " + (i + 1) + " " + "일";
+          DAYS[k] = monthText + " " + "월" + " " + (i + 1) + " " + "일";
+          if (j > 0) {
+            DAYS[k] = " ";
+          }
+          k++;
         }
       }
 
       // 무작위 데이터를 만든다.
       var randomData = new Array(); // 무작위 데이터
-      for (let index = 0; index < totalCount; index++) {
-        randomData[index] = 1;
+      for (let i = 0; i < dayCount * hourCount; i++) {
+        randomData[i] = randomScalingFactor();
       }
 
       var irradiationText = "일사량(MJ/㎡)";
@@ -85,8 +90,7 @@
               backgroundColor: chartColors.red,
               borderColor: chartColors.red,
               data: randomData,
-              fill: false,
-              borderWidth: 1
+              fill: false
             },
             {
               type: "bar",
@@ -95,8 +99,7 @@
               backgroundColor: chartColors.orange,
               borderColor: chartColors.orange,
               data: randomData,
-              fill: false,
-              borderWidth: 1
+              fill: false
             },
             {
               type: "bar",
@@ -105,8 +108,7 @@
               backgroundColor: chartColors.green,
               borderColor: chartColors.green,
               data: randomData,
-              fill: false,
-              borderWidth: 1
+              fill: false
             },
             {
               type: "bar",
@@ -115,8 +117,7 @@
               backgroundColor: chartColors.blue,
               borderColor: chartColors.blue,
               data: randomData,
-              fill: false,
-              borderWidth: 1
+              fill: false
             },
             {
               type: "bar",
@@ -125,8 +126,7 @@
               backgroundColor: chartColors.purple,
               borderColor: chartColors.purple,
               data: randomData,
-              fill: false,
-              borderWidth: 1
+              fill: false
             }
           ]
         },
@@ -171,7 +171,9 @@
             ],
             xAxes: [
               {
-                barThickness: 10,
+                barPercentage: 1,
+                categoryPercentage: 1,
+                maxBarThickness: 8,
                 gridLines: {
                   drawBorder: false,
                   color: "white"
