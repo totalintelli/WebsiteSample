@@ -8,7 +8,7 @@
         color: white !important;
         background-color: #333333 !important;
         /* border: black !important; */
-        text-align: center;
+        text-align: right;
       }
       body {
         background-color: #333333;
@@ -461,9 +461,11 @@
         data.addRows(dataset);
 
         // 표의 열 스타일을 설정한다.
-        data.setProperty(0, 0, "style", "width: 5px");
-        data.setProperty(0, 1, "style", "width: 100px");
-        data.setProperty(0, 2, "style", "width: 70px");
+        for (let i = 0; i < 22; i++) {
+          data.setProperty(i, 0, "style", "width: 5px;text-align: center;");
+          data.setProperty(i, 1, "style", "width: 100px;text-align: center;");
+          data.setProperty(i, 2, "style", "width: 70px;text-align: center;");
+        }
 
         var table = new google.visualization.Table(
           document.getElementById("table_div")
