@@ -55,7 +55,11 @@
       </p>
     </div>
     <script type="text/javascript">
+      // Load the Visualization API and the corechart package.
       google.charts.load("current", { packages: ["table"] });
+      
+      // Set a callback to run when the Google Visualization API is loaded.
+      google.charts.setOnLoadCallback(draw);
 
       function draw() {
         drawDayTable();
@@ -438,6 +442,8 @@
 
       function drawDayTable() {
         var data = new google.visualization.DataTable();
+
+        // 표의 열을 생성한다.
         data.addColumn("string", "구분");
         data.addColumn("string", "일자");
         data.addColumn("string", "시간");
@@ -452,13 +458,21 @@
         data.addColumn("number", "수평일사량(W/㎡)");
         data.addColumn("number", "모듈온도(℃)");
         data.addColumn("number", "대기온도(℃)");
+
+        // 표의 행을 생성한다.
         data.addRows(dataset);
+
+        // 표의 열 스타일을 설정한다.
+        data.setProperty(0, 0, "style", "width: 5px");
+        data.setProperty(0, 1, "style", "width: 100px");
+        data.setProperty(0, 2, "style", "width: 70px");
 
         var table = new google.visualization.Table(
           document.getElementById("table_div")
         );
 
         table.draw(data, {
+          width: "100%",
           height: "100%",
           page: "enable",
           pageSize: 17,
@@ -512,6 +526,7 @@
         }
       });
 
+      // 엑셀 버튼 클릭 이벤트를 실행한다.
       function raiseEvent(element, eventType) {
         var eventRaised;
         if (document.createEvent) {
@@ -524,7 +539,7 @@
         }
       }
 
-      google.charts.setOnLoadCallback(draw);
+      
     </script>
   </body>
 </html>
