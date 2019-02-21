@@ -5,8 +5,34 @@
     <title></title>
     <style>
       .google-visualization-table-td {
-        color: blue !important;
+        color: white !important;
+        background-color: #333333 !important;
         text-align: center;
+      }
+      body {
+        background-color: #333333;
+      }
+      .google-visualization-table-th {
+        color: white;
+        background-color: #191919 !important;
+        fill-opacity: 1 !important;
+      }
+
+      .google-visualization-table-div-page {
+        color: white;
+        background-color: #191919 !important;
+        fill-opacity: 1 !important;
+        text-align: center !important;
+        height: 30px;
+        padding: 5px 5px !important;
+      }
+
+      .goog-custom-button-outer-box {
+        font-size: 15px !important;
+      }
+      .google-visualization-table-page-number {
+        height: 17px;
+        font-size: 15px !important;
       }
     </style>
   </head>
@@ -14,22 +40,30 @@
   <body>
     <table></table>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-    <script
-      type="text/javascript"
-      src="https://www.gstatic.com/charts/loader.js"
-    ></script>
-    <div>
-      <button id="export" class="ui-button ui-widget ui-corner-all">
-        <span class="ui-icon ui-icon-circle-triangle-s"></span
-        ><span>&nbsp;Download CSV</span>
-      </button>
+    <script type="text/javascript" src="./js/loader.js"></script>
+    <div id="tableContent">
+      <div>
+        <button id="export" class="ui-button ui-widget ui-corner-all">
+          <span class="ui-icon ui-icon-circle-triangle-s"></span
+          ><span>&nbsp;Download CSV</span>
+        </button>
+      </div>
+      <p>
+        <div id="table_div"></div>
+      </p>
     </div>
-    <div id="table_div"></div>
     <script type="text/javascript">
       google.charts.load("current", { packages: ["table"] });
 
       function draw() {
         drawDayTable();
+        const ths = document.querySelectorAll("th");
+        ths.forEach(function(th) {
+          th.classList.remove("gradient");
+        });
+        const table_div = document.getElementById("table_div");
+        const page = table_div.childNodes[0].childNodes[1];
+        page.classList.remove("gradient");
       }
 
       function formatDate(date) {
@@ -47,7 +81,7 @@
       const today = formatDate(new Date());
       const dataset = [
         [
-          1,
+          "1",
           today,
           "5:00",
           130.0,
@@ -63,7 +97,7 @@
           130.0
         ],
         [
-          2,
+          "2",
           today,
           "5:00",
           130.0,
@@ -79,7 +113,7 @@
           130.0
         ],
         [
-          3,
+          "3",
           today,
           "5:00",
           130.0,
@@ -95,7 +129,7 @@
           130.0
         ],
         [
-          4,
+          "4",
           today,
           "5:00",
           130.0,
@@ -111,7 +145,7 @@
           130.0
         ],
         [
-          5,
+          "5",
           today,
           "5:00",
           130.0,
@@ -127,7 +161,7 @@
           130.0
         ],
         [
-          6,
+          "6",
           today,
           "5:00",
           130.0,
@@ -143,7 +177,7 @@
           130.0
         ],
         [
-          7,
+          "7",
           today,
           "5:00",
           130.0,
@@ -159,7 +193,7 @@
           130.0
         ],
         [
-          8,
+          "8",
           today,
           "5:00",
           130.0,
@@ -175,7 +209,7 @@
           130.0
         ],
         [
-          9,
+          "9",
           today,
           "5:00",
           130.0,
@@ -191,7 +225,7 @@
           130.0
         ],
         [
-          10,
+          "10",
           today,
           "5:00",
           130.0,
@@ -207,7 +241,7 @@
           130.0
         ],
         [
-          11,
+          "11",
           today,
           "5:00",
           130.0,
@@ -223,7 +257,7 @@
           130.0
         ],
         [
-          12,
+          "12",
           today,
           "5:00",
           130.0,
@@ -239,7 +273,7 @@
           130.0
         ],
         [
-          13,
+          "13",
           today,
           "5:00",
           130.0,
@@ -255,7 +289,7 @@
           130.0
         ],
         [
-          14,
+          "14",
           today,
           "5:00",
           130.0,
@@ -271,7 +305,7 @@
           130.0
         ],
         [
-          15,
+          "15",
           today,
           "5:00",
           130.0,
@@ -287,7 +321,7 @@
           130.0
         ],
         [
-          16,
+          "16",
           today,
           "5:00",
           130.0,
@@ -319,7 +353,7 @@
           100000
         ],
         [
-          17,
+          "17",
           today,
           "5:00",
           130.0,
@@ -335,7 +369,7 @@
           130.0
         ],
         [
-          18,
+          "18",
           today,
           "5:00",
           130.0,
@@ -351,7 +385,7 @@
           130.0
         ],
         [
-          19,
+          "19",
           today,
           "5:00",
           130.0,
@@ -367,7 +401,7 @@
           130.0
         ],
         [
-          20,
+          "20",
           today,
           "5:00",
           130.0,
@@ -383,7 +417,7 @@
           130.0
         ],
         [
-          21,
+          "21",
           today,
           "5:00",
           130.0,
@@ -400,21 +434,9 @@
         ]
       ];
 
-      //   var cssClassNames = {
-      //     headerRow: "cssHeaderRow",
-      //     tableRow: "cssTableRow",
-      //     oddTableRow: "cssOddTableRow",
-      //     selectedTableRow: "cssSelectedTableRow",
-      //     hoverTableRow: "cssHoverTableRow",
-      //     headerCell: "cssHeaderCell",
-      //     tableCell: "cssTableCell",
-      //     rowNumberCell: "cssRowNumberCell",
-      //     gradient: "cssHeaderCell"
-      //   };
-
       function drawDayTable() {
         var data = new google.visualization.DataTable();
-        data.addColumn("number", "구분");
+        data.addColumn("string", "구분");
         data.addColumn("string", "일자");
         data.addColumn("string", "시간");
         data.addColumn("number", "INV-1(kWh)");
@@ -440,11 +462,10 @@
           page: "enable",
           pageSize: 17,
           pagingSymbols: {
-            prev: "prev",
-            next: "next"
+            prev: "◀",
+            next: "▶"
           },
           pagingButtonsConfiguration: "auto"
-          //   cssClassNames: cssClassNames
         });
 
         return data;
