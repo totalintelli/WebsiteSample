@@ -432,20 +432,16 @@
 
       // 열 제목이 두 개인 표를 만든다.
       var data = new google.visualization.DataTable();
-      data.addColumn("string", "전압(V)");
-      data.addColumn("string", "전류(A)");
-      data.addColumn("string", "입력(kW)");
-      data.addColumn("string", "전압(RS)");
-      data.addColumn("string", "전압(ST)");
-      data.addColumn("string", "전압(TR)");
-      data.addColumn("string", "전류(R)");
-      data.addColumn("string", "전류(S)");
-      data.addColumn("string", "전류(T)");
-      data.addColumn("string", "출력(kW)");
-      data.addColumn("string", "발전량(kWh)");
-      data.addColumn("string", "누적발전량(kWh)");
-      data.addColumn("string", "주파수");
-      data.addColumn("string", "역률");
+      data.addColumn("string", "구분");
+      data.addColumn("string", "일자");
+      data.addColumn("string", "시간");
+      data.addColumn("string", "INV-1(kWh)");
+      data.addColumn("string", "INV-2(kWh)");
+      data.addColumn("string", "INV-3(kWh)");
+      data.addColumn("string", "INV-4(kWh)");
+      data.addColumn("string", "INV-5(kWh)");
+      data.addColumn("string", "전체 발전량(kWh)");
+      data.addColumn("string", "발전시간(h)");
       data.addColumn("string", "경사");
       data.addColumn("string", "수평");
       data.addColumn("string", "모듈");
@@ -453,19 +449,28 @@
 
       const tablechart = document.getElementById('tablechart');
       var table = new google.visualization.Table(tablechart);
+      const dateText = "일자";
 
       table.draw(data, { showRowNumber: false, width: '100%', height: '100%' });
-      var tablehead = '<tr class="google-visualization-table-thead">' +
-        '<th class="google-visualization-table-th unsorted" rowspan=2>구분</th>' +
-        '<th class="google-visualization-table-th unsorted" rowspan=2>일자</th>' +
-        '<th class="google-visualization-table-th unsorted" rowspan=2>시간</th>' + 
-        '<th class="google-visualization-table-th unsorted" colspan=3>DC</th>' + 
-        '<th class="google-visualization-table-th unsorted" colspan=11>AC</th>' +
-        '<th class="google-visualization-table-th unsorted" rowspan=2>발전시간</th>' +
-        '<th class="google-visualization-table-th unsorted" colspan=2>일사량(W/㎡)</th>' + 
-        '<th class="google-visualization-table-th unsorted" colspan=2>온도(℃)</th>' + 
-      '</tr>';
-      var stuff = $('#tablechart').find('thead').prepend(tablehead);
+
+      // 상단 표 헤더 코드를 만든다.
+      var upTableHeader = '<tr class="google-visualization-table-thead">' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">구분</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">' + dateText + '</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">시간</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">INV-1(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">INV-2(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">INV-3(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">INV-4(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">INV-5(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">전체 발전량(kWh)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted">발전시간(h)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted" colspan=2>일사량(W/㎡)</th>' +
+                    '<th class="google-visualization-table-th google-table-th unsorted" colspan=2>온도(℃)</th>' +
+                    '</tr>';
+
+      // 상단 표 헤더를 만든다.
+      var stuff = $('#tablechart').find('thead').prepend(upTableHeader);
       
       // 테이블 헤더에 있는 graient 클래스를 삭제한다.
       const ths = document.querySelectorAll("th");
