@@ -195,6 +195,78 @@ var data = [
   ["", "", "합계/평균", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 ];
 
+// 초기 입력값은 오늘 날짜로 한다.
+var start = moment();
+var end = moment();
+
+// 텍스트 박스의 출력값을 정한다.
+function cb(start, end) {
+  $("#reportrange span").html(
+    start.format("YYYY-MM-DD") + " ~ " + end.format("YYYY-MM-DD")
+  );
+}
+
+// 팝업 창을 만든다.
+$("#reportrange").daterangepicker(
+  {
+    // 영어를 한국어로 번역한다.
+    locale: {
+      format: "YYYY-MM-DD",
+      separator: " ~ ",
+      applyLabel: "적용",
+      cancelLabel: "취소",
+      fromLabel: "From",
+      toLabel: "To",
+      customRangeLabel: "직접선택",
+      daysOfWeek: ["일", "월", "화", "수", "목", "금", "토"],
+      monthNames: [
+        "1월",
+        "2월",
+        "3월",
+        "4월",
+        "5월",
+        "6월",
+        "7월",
+        "8월",
+        "9월",
+        "10월",
+        "11월",
+        "12월"
+      ],
+      firstDay: 1
+    },
+    startDate: start,
+    endDate: end,
+    // Custom Range의 최대값을 30일로 한다.
+    maxSpan: {
+      days: 30
+    },
+    showDropdowns: false,
+    autoApply: true,
+    dateLimit: {
+      days: 32
+    },
+    ranges: {
+      금일: [moment(), moment()],
+      전일: [moment().subtract(1, "days"), moment().subtract(1, "days")],
+      "지난 한 주": [moment().subtract(6, "days"), moment()],
+      "지난 30일": [moment().subtract(29, "days"), moment()],
+      이번달: [moment().startOf("month"), moment().endOf("month")],
+      지난달: [
+        moment()
+          .subtract(1, "month")
+          .startOf("month"),
+        moment()
+          .subtract(1, "month")
+          .endOf("month")
+      ]
+    },
+    opens: "left"
+  },
+  cb
+);
+cb(start, end);
+
 // 인버터 표를 그린다.
 function drawInverterTable() {
   //   for (var i = 0; i < data.length; i++) {

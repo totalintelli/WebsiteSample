@@ -29,7 +29,13 @@
         background-color: #242424 !important;
         text-align: center !important;
       }
+      .fa-calendar {
+        float: right;
+      }
     </style>
+
+    <!-- 달력 관련 스타일 -->
+    <link rel="stylesheet" href="./css/daterangepicker.css" />
   </head>
 
   <body>
@@ -68,12 +74,30 @@
             <option>1시간(평균)</option>
         </select>
     </div>
+    <div>
+      작업일자
+      <div
+      id="reportrange"
+      style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 40%"
+    >
+      <span></span> <i class="fa fa-calendar"></i>
+    </div>
+    </div>
     <p>
       <div id="grid_group" style="margin:auto;"></div>
     </p>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.9.2/jquery-ui.min.js"></script>
+    <!-- 달력 관련 스크립트 -->
+    <script
+      type="text/javascript"
+      src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"
+    ></script>
+    <script src="./js/daterangepicker.js"></script>
+
+    <!-- 표 관련 스크립트 -->
     <script type="text/javascript" src="./js/pqgrid.min.js"></script>
+
     <script type="text/javascript" src="Report.js"></script>
   </body>
 </html>
