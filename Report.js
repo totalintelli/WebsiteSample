@@ -312,7 +312,8 @@ function drawInverterTable() {
     numberCell: { show: false },
     editable: false,
     resizable: false,
-    sorting: "local"
+    sorting: "local",
+    sortorder: "desc"
   };
   obj.columnTemplate = { width: 100 };
 
@@ -334,9 +335,7 @@ function drawInverterTable() {
         { title: "구분", align: "center", width: 40 },
         { title: dateText, align: "center" },
         { title: "시간", align: "center", width: 84 },
-        {
-          title: "INV-1 (kWh)"
-        },
+        { title: "INV-1 (kWh)" },
         { title: "INV-2 (kWh)" },
         { title: "INV-3 (kWh)" },
         { title: "INV-4 (kWh)" },
@@ -370,9 +369,7 @@ function drawInverterTable() {
       obj.colModel = [
         { title: "구분", align: "center", width: 40 },
         { title: dateText, align: "center" },
-        {
-          title: "INV-1 (kWh)"
-        },
+        { title: "INV-1 (kWh)" },
         { title: "INV-2 (kWh)" },
         { title: "INV-3 (kWh)" },
         { title: "INV-4 (kWh)" },
@@ -1326,8 +1323,6 @@ function drawWeatherClassTable() {
   } else {
     dateText = "일자";
   }
-
-  const acbText = "ACB";
 
   // 표의 헤더를 수정한다.
   obj.colModel = [
