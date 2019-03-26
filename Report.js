@@ -268,7 +268,7 @@ $("#reportrange").daterangepicker(
 cb(start, end);
 
 // 인버터 표를 그린다.
-function drawInverterTable() {
+function drawInverterTable(isNewData) {
   //   for (var i = 0; i < data.length; i++) {
   //     //rev(total)
   //     var revDom = parseFloat(data[i][3].replace(",", ""));
@@ -601,8 +601,10 @@ function drawInverterTable() {
     rPPOptions: [17]
   };
 
-  // 표를 삭제한다.
-  $("#table_div").pqGrid("destroy");
+  if (isNewData) {
+    // 표를 삭제한다.
+    $("#grid_group").pqGrid("destroy");
+  }
 
   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
@@ -612,22 +614,35 @@ function drawInverterTable() {
   const page = grid_group.childNodes[2];
   page.classList.remove("ui-widget-header");
 }
-drawInverterTable();
+drawInverterTable(false);
 
 // 접속반 표를 그린다.
 function drawConnectionClassTable() {
   var obj = {
     width: "auto",
-    height: 480,
-    showTop: false,
-    title: "Grid with header grouping",
     showBottom: true,
     collapsible: true,
     selectionModel: { swipe: true },
     numberCell: { show: false },
     editable: false,
     resizable: false,
-    sorting: "local"
+    sorting: "local",
+    sortorder: "desc",
+    height: 'flex',
+    scrollModel: {autoFit: true},
+    toolbar: {
+      cls: 'pq-toolbar-export',
+      items: [{
+        type: 'button',
+        label: 'Excel',
+        icon: 'ui-icon-document',
+        listeners: [{
+          "click": function (evt) {
+            $("#grid_group").pqGrid("exportCsv", {url: "/pro/demos/excel"});
+          }
+        }]
+      }]
+    }
   };
   obj.columnTemplate = { width: 100 };
 
@@ -882,10 +897,11 @@ function drawConnectionClassTable() {
     rPPOptions: [17]
   };
 
+  // 표를 삭제한다.
+  $("#grid_group").pqGrid("destroy");
+
   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
-  // 표를 새로고침한다.
-  $("#grid_group").pqGrid("refresh");
 
   // 페이지 링크에 색상을 적용한다.
   const grid_group = document.getElementById("grid_group");
@@ -897,16 +913,29 @@ function drawConnectionClassTable() {
 function drawACBTable() {
   var obj = {
     width: "auto",
-    height: 480,
-    showTop: false,
-    title: "Grid with header grouping",
     showBottom: true,
     collapsible: true,
     selectionModel: { swipe: true },
     numberCell: { show: false },
     editable: false,
     resizable: false,
-    sorting: "local"
+    sorting: "local",
+    sortorder: "desc",
+    height: 'flex',
+    scrollModel: {autoFit: true},
+    toolbar: {
+      cls: 'pq-toolbar-export',
+      items: [{
+        type: 'button',
+        label: 'Excel',
+        icon: 'ui-icon-document',
+        listeners: [{
+          "click": function (evt) {
+            $("#grid_group").pqGrid("exportCsv", {url: "/pro/demos/excel"});
+          }
+        }]
+      }]
+    }
   };
   obj.columnTemplate = { width: 100 };
 
@@ -1094,10 +1123,11 @@ function drawACBTable() {
     rPPOptions: [17]
   };
 
+  // 표를 삭제한다.
+  $("#grid_group").pqGrid("destroy");
+
   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
-  // 표를 새로고침한다.
-  $("#grid_group").pqGrid("refresh");
 
   // 페이지 링크에 색상을 적용한다.
   const grid_group = document.getElementById("grid_group");
@@ -1109,9 +1139,6 @@ function drawACBTable() {
 function drawVCBTable() {
   var obj = {
     width: "auto",
-    height: 480,
-    showTop: false,
-    title: "Grid with header grouping",
     showBottom: true,
     collapsible: true,
     selectionModel: { swipe: true },
@@ -1119,6 +1146,9 @@ function drawVCBTable() {
     editable: false,
     resizable: false,
     sorting: "local",
+    sortorder: "desc",
+    height: 'flex',
+    scrollModel: {autoFit: true},
     toolbar: {
       cls: 'pq-toolbar-export',
       items: [{
@@ -1313,10 +1343,11 @@ function drawVCBTable() {
     rPPOptions: [17]
   };
 
+  // 표를 삭제한다.
+  $("#grid_group").pqGrid("destroy");
+
   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
-  // 표를 새로고침한다.
-  $("#grid_group").pqGrid("refresh");
 
   // 페이지 링크에 색상을 적용한다.
   const grid_group = document.getElementById("grid_group");
@@ -1328,16 +1359,29 @@ function drawVCBTable() {
 function drawWeatherClassTable() {
   var obj = {
     width: "auto",
-    height: 480,
-    showTop: false,
-    title: "Grid with header grouping",
     showBottom: true,
     collapsible: true,
     selectionModel: { swipe: true },
     numberCell: { show: false },
     editable: false,
     resizable: false,
-    sorting: "local"
+    sorting: "local",
+    sortorder: "desc",
+    height: 'flex',
+    scrollModel: {autoFit: true},
+    toolbar: {
+      cls: 'pq-toolbar-export',
+      items: [{
+        type: 'button',
+        label: 'Excel',
+        icon: 'ui-icon-document',
+        listeners: [{
+          "click": function (evt) {
+            $("#grid_group").pqGrid("exportCsv", {url: "/pro/demos/excel"});
+          }
+        }]
+      }]
+    }
   };
   obj.columnTemplate = { width: 100 };
 
@@ -1392,10 +1436,11 @@ function drawWeatherClassTable() {
     rPPOptions: [17]
   };
 
-  // 표를 만든다.
+  // 표를 삭제한다.
+  $("#grid_group").pqGrid("destroy");
+
+   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
-  // 표를 새로고침한다.
-  $("#grid_group").pqGrid("refresh");
 
   // 페이지 링크에 색상을 적용한다.
   const grid_group = document.getElementById("grid_group");
@@ -1520,13 +1565,13 @@ function changeReportType() {
 }
 
 // 표를 그린다.
-function drawTable() {
+function drawTable(isNewData) {
   const equipmentName = $("#equipmentName").val(); // 장비 종류
 
   // 장비 종류가 인버터인지 확인한다.
   if (equipmentName === "인버터") {
     // 인버터 표를 그린다.
-    drawInverterTable();
+    drawInverterTable(isNewData);
   } else if (equipmentName === "기상반") {
     drawWeatherClassTable();
   } else if (equipmentName === "VCB") {
@@ -1548,7 +1593,7 @@ $("#equipmentName").change(function() {
   // 세부 항목을 변경한다.
   changeDetailItem();
   // 표를 그린다.
-  drawTable();
+  drawTable(true);
   // 장치명이 기상반이면 보고서의 종류를 일일만 넣는다.
   changeReportType();
 });
@@ -1558,11 +1603,11 @@ $("#reportType").change(function() {
   // 보고서 종류를 수정하면 수집시간을 변경한다.
   changeCollectionHour();
   // 표를 그린다.
-  drawTable();
+  drawTable(true);
 });
 
 // 세부 항목을 입력하면 차트와 표를 다시 그린다.
 $("#detailItem").change(function() {
   // 표를 그린다.
-  drawTable();
+  drawTable(false);
 });
