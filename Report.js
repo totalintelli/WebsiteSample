@@ -303,9 +303,6 @@ function drawInverterTable() {
 
   var obj = {
     width: "auto",
-    height: 480,
-    showTop: false,
-    title: "Grid with header grouping",
     showBottom: true,
     collapsible: true,
     selectionModel: { swipe: true },
@@ -313,7 +310,22 @@ function drawInverterTable() {
     editable: false,
     resizable: false,
     sorting: "local",
-    sortorder: "desc"
+    sortorder: "desc",
+    height: 'flex',
+    scrollModel: {autoFit: true},
+    toolbar: {
+      cls: 'pq-toolbar-export',
+      items: [{
+        type: 'button',
+        label: 'Excel',
+        icon: 'ui-icon-document',
+        listeners: [{
+          "click": function (evt) {
+            $("#grid_group").pqGrid("exportCsv", {url: "/pro/demos/excel"});
+          }
+        }]
+      }]
+    }
   };
   obj.columnTemplate = { width: 100 };
 
@@ -589,10 +601,11 @@ function drawInverterTable() {
     rPPOptions: [17]
   };
 
+  // 표를 삭제한다.
+  $("#table_div").pqGrid("destroy");
+
   // 표를 만든다.
   $("#grid_group").pqGrid(obj);
-  // 표를 새로고침한다.
-  $("#grid_group").pqGrid("refresh");
 
   // 페이지 링크에 색상을 적용한다.
   const grid_group = document.getElementById("grid_group");
@@ -1105,7 +1118,20 @@ function drawVCBTable() {
     numberCell: { show: false },
     editable: false,
     resizable: false,
-    sorting: "local"
+    sorting: "local",
+    toolbar: {
+      cls: 'pq-toolbar-export',
+      items: [{
+        type: 'button',
+        label: 'Excel',
+        icon: 'ui-icon-document',
+        listeners: [{
+          "click": function (evt) {
+            $("#grid_group").pqGrid("exportCsv", {url: "/pro/demos/excel"});
+          }
+        }]
+      }]
+    }
   };
   obj.columnTemplate = { width: 100 };
 
